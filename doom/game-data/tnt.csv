@@ -1,32 +1,32 @@
-game_name,iwad,pwad,complevel,episode_name,episode_number,mission_name,mission_number,level_number,is_secret
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Experimental Labs,1,System Control,1,1,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Experimental Labs,1,Human BBQ,2,2,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Experimental Labs,1,Power Control,3,3,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Experimental Labs,1,Wormhole,4,4,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Experimental Labs,1,Hanger,5,5,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Experimental Labs,1,Open Season,6,6,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Military Base,2,Prison,1,7,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Military Base,2,Metal,2,8,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Military Base,2,Stronghold,3,9,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Military Base,2,Redemption,4,10,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,2,Storage Facility,5,11,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Crater,1,12,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Nukage Processing,2,13,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Steel Works,3,14,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Dead Zone,4,15,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Deepest Reaches,5,16,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Processing Area,6,17,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Mill,7,18,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Shipping/Respawning,8,19,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Central Processing,9,20,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Night-time,3,Pharoah,10,31,true
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Administration Center,1,21,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Habitat,2,22,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Lunar Mining Project,3,23,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Quarry,4,24,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Baron's Den,5,25,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Ballistyx,6,26,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Mount Palm,7,27,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Heck,8,28,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Hellish,4,Administration Center,9,29,false
-TNT: Evilution,DOOM2.WAD,TNT.WAD,4,Secret,5,Caribbean,1,31,true
+game_name,iwad,pwad,complevel,release_date,episode_name,episode_number,mission_name,mission_number,level_number,is_secret
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Experimental Labs,1,System Control,1,1,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Experimental Labs,1,Human BBQ,2,2,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Experimental Labs,1,Power Control,3,3,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Experimental Labs,1,Wormhole,4,4,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Experimental Labs,1,Hanger,5,5,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Experimental Labs,1,Open Season,6,6,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Military Base,2,Prison,1,7,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Military Base,2,Metal,2,8,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Military Base,2,Stronghold,3,9,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Military Base,2,Redemption,4,10,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,2,Storage Facility,5,11,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Crater,1,12,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Nukage Processing,2,13,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Steel Works,3,14,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Dead Zone,4,15,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Deepest Reaches,5,16,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Processing Area,6,17,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Mill,7,18,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Shipping/Respawning,8,19,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Central Processing,9,20,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Night-time,3,Pharoah,10,31,true
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Administration Center,1,21,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Habitat,2,22,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Lunar Mining Project,3,23,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Quarry,4,24,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Baron's Den,5,25,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Ballistyx,6,26,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Mount Palm,7,27,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Heck,8,28,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Hellish,4,Administration Center,9,29,false
+TNT: Evilution,DOOM2.WAD,TNT.WAD,4,1996-06-17,Secret,5,Caribbean,1,31,true

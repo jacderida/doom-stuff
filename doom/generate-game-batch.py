@@ -2,6 +2,7 @@
 
 import csv
 import glob
+import operator
 import os
 import shutil
 import sys
@@ -10,26 +11,39 @@ from collections import namedtuple
 
 class CrispyDoomSourcePort(object):
     def __init__(self, install_path, version, doom_config):
-        self.name = 'Crispy Doom'
+        self.friendly_name = 'Crispy Doom'
+        self.name = 'crispy'
         self.config_name = 'crispy-doom-custom.cfg'
         self.install_path = install_path
-        self.exe_path = "{0}\\{1}".format(install_path, 'crispy-doom.exe')
+        self.exe_name = 'crispy-doom.exe'
+        self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
         self.version = version
         self.doom_config = doom_config
 
-    def get_launch_command(self, game, episode, mission):
-        command = '{0} '.format(self.exe_path)
-        command += self._get_game_options(game)
-        command += self._get_misc_options()
-        command += self._get_skill_option()
-        command += self._get_warp_option(game, episode, mission)
-        return command
+    def get_launch_commands(self, game, episode, mission):
+        commands = []
+        commands.append('set start=%cd%')
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.doom_config.config_path,
+            self.config_name,
+            self.install_path,
+            'crispy-doom.cfg'))
+        commands.append('cd {0}'.format(self.install_path))
+        launch_command = '{0} '.format(self.exe_name)
+        launch_command += self._get_game_options(game)
+        launch_command += self._get_misc_options()
+        launch_command += self._get_skill_option()
+        launch_command += self._get_warp_option(game, episode, mission)
+        commands.append(launch_command)
+        commands.append('del crispy-doom.cfg')
+        commands.append('cd %start%')
+        return commands
 
     def _get_game_options(self, game):
-        options = '-config {0} '.format(self.config_path)
-        options += '-iwad {0} '.format(game.iwad)
+        options = '-config {0} '.format('crispy-doom.cfg')
+        options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
         if game.wad:
-            options += '-file {0} '.format(game.wad)
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
         return options
 
     def _get_misc_options(self):
@@ -51,13 +65,13 @@ class DoomRetroSourcePort(object):
         self.name = name
         self.exe_path = exe_path
 
-    def get_launch_command(self, game, episode, mission):
+    def get_launch_commands(self, game, episode, mission):
         command = '{0} '.format(self.exe_path)
         command += self._get_game_options(game)
         command += self._get_misc_options()
         command += self._get_skill_option()
         command += self._get_warp_option(game, episode, mission)
-        return command
+        return [command]
 
     def _get_game_options(self, game):
         options = '-iwad {0} '.format(game.iwad)
@@ -80,13 +94,13 @@ class PrBoomSourcePort(object):
         self.name = name
         self.exe_path = exe_path
 
-    def get_launch_command(self, game, episode, mission):
+    def get_launch_commands(self, game, episode, mission):
         command = '{0} '.format(self.exe_path)
         command += self._get_game_options(game)
         command += self._get_misc_options()
         command += self._get_skill_option()
         command += self._get_warp_option(game, episode, mission)
-        return command
+        return [command]
 
     def _get_game_options(self, game):
         command = '-iwad {0} '.format(game.iwad)
@@ -110,25 +124,24 @@ class PrBoomSourcePort(object):
 
 
 class Game(object):
-    def __init__(self, name, iwad, wad, complevel, source_port):
+    def __init__(self, name, iwad, wad, complevel, release_date, source_port, doom_config):
         self.name = name
         self.iwad = iwad
         self.wad = wad
         self.complevel = complevel
+        self.release_date = release_date
         self.episodes = []
         self.source_port = source_port
+        self.doom_config = doom_config
 
     def add_episode(self, episode):
         self.episodes.append(episode)
 
     def write_batch_files(self):
-        if os.path.isdir('batch'):
-            shutil.rmtree('batch')
-        os.mkdir('batch')
         for episode in self.episodes:
             for mission in episode.missions:
-                command = self.source_port.get_launch_command(self, episode, mission)
-                path = self._get_batch_file_path(episode, mission)
+                commands = self.source_port.get_launch_commands(self, episode, mission)
+                path = self._get_batch_file_path(episode, mission, self.source_port)
                 with open(path, 'w') as f:
                     print('Writing {0}'.format(path))
                     f.write('@echo off')
@@ -139,14 +152,22 @@ class Game(object):
                         str(mission.number).zfill(2),
                         mission.name,
                         os.linesep))
-                    f.write(command + os.linesep)
+                    for command in commands:
+                        f.write(command + os.linesep)
 
-    def _get_batch_file_path(self, episode, mission):
-        return "batch/MAP{0} -- E{1}M{2} -- {3}.bat".format(
+    def _get_batch_file_path(self, episode, mission, source_port):
+        game_launcher_path = os.path.join(
+            self.doom_config.unix_launchers_path,
+            '{0} -- {1}'.format(self.release_date, self.name.replace(':', ' --')),
+            source_port.name)
+        if not os.path.exists(game_launcher_path):
+            os.makedirs(game_launcher_path)
+        batch_file_name = 'MAP{0} -- E{1}M{2} -- {3}.bat'.format(
             str(mission.level).zfill(2),
             str(episode.number).zfill(2),
             str(mission.number).zfill(2),
             mission.name)
+        return os.path.join(game_launcher_path, batch_file_name)
 
 
 class Episode(object):
@@ -171,8 +192,9 @@ class Mission(object):
 
 
 class GameParser(object):
-    def __init__(self, csv_path):
+    def __init__(self, csv_path, doom_config):
         self.csv_path = csv_path
+        self.doom_config = doom_config
 
     def parse_game(self, source_port):
         game_data = self.get_game_data_from_csv()
@@ -182,7 +204,9 @@ class GameParser(object):
             game_data[0].iwad,
             game_data[0].pwad,
             game_data[0].complevel,
-            source_port)
+            game_data[0].release_date,
+            source_port,
+            self.doom_config)
         for _, value in episode_boundaries.items():
             start = value[0]
             end = value[1]
@@ -226,6 +250,7 @@ class DoomConfig(object):
         self.windows_home_directory_path = windows_home_directory_path
         self.unix_home_directory_path = unix_home_directory_path
         self.unix_source_ports_path = os.path.join(unix_home_directory_path, 'source-ports')
+        self.unix_launchers_path = os.path.join(unix_home_directory_path, 'launchers')
         self.config_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'config')
         self.source_ports_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'source-ports')
         self.launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'launchers')
@@ -266,19 +291,19 @@ class CliMenu(object):
     def get_source_port(self):
         builder = SourcePortBuilder(self.doom_config)
         source_ports = builder.get_source_ports()
-        print(source_ports[0].exe_path)
         print('Please select a source port:')
         for n, source_port in enumerate(source_ports, start=1):
-            print('{0}. {1}'.format(n, source_port.name))
+            print('{0}. {1}'.format(n, source_port.friendly_name))
         selection = self._get_valid_input(len(source_ports))
         return source_ports[selection - 1]
 
     def get_user_game_selection(self, source_port):
         self._display_banner()
         games = self._get_game_list(source_port)
+        games_sorted_by_date = sorted(games, key=operator.attrgetter('release_date'))
         print('The following games were found:')
-        for n, game in enumerate(games, start=1):
-            print('{0}. {1}'.format(n, game.name))
+        for n, game in enumerate(games_sorted_by_date, start=1):
+            print('{0}. {1} -- {2}'.format(n, game.release_date, game.name))
         print('Please select the game to generate batch files for:')
         selection = self._get_valid_input(len(games))
         return games[selection - 1]
@@ -295,7 +320,7 @@ class CliMenu(object):
         games = []
         os.chdir(self.game_data_path)
         for game_file in glob.glob('*.csv'):
-            parser = GameParser(game_file)
+            parser = GameParser(game_file, self.doom_config)
             games.append(parser.parse_game(source_port))
         return games
 
@@ -327,8 +352,8 @@ def main():
     doom_config = get_doom_config()
     menu = CliMenu('./game-data', doom_config)
     source_port = menu.get_source_port()
-    # game = menu.get_user_game_selection(source_port)
-    # game.write_batch_files()
+    game = menu.get_user_game_selection(source_port)
+    game.write_batch_files()
 
 if __name__ == '__main__':
     sys.exit(main())
