@@ -9,10 +9,13 @@ from collections import namedtuple
 
 
 class CrispyDoomSourcePort(object):
-    def __init__(self, name, exe_path, config_path):
-        self.name = name
-        self.exe_path = exe_path
-        self.config_path = config_path
+    def __init__(self, install_path, version, doom_config):
+        self.name = 'Crispy Doom'
+        self.config_name = 'crispy-doom-custom.cfg'
+        self.install_path = install_path
+        self.exe_path = "{0}\\{1}".format(install_path, 'crispy-doom.exe')
+        self.version = version
+        self.doom_config = doom_config
 
     def get_launch_command(self, game, episode, mission):
         command = '{0} '.format(self.exe_path)
@@ -218,20 +221,52 @@ class GameParser(object):
                 episode_boundaries[episode] = (start, index)
         return episode_boundaries
 
+class DoomConfig(object):
+    def __init__(self, windows_home_directory_path, unix_home_directory_path):
+        self.windows_home_directory_path = windows_home_directory_path
+        self.unix_home_directory_path = unix_home_directory_path
+        self.unix_source_ports_path = os.path.join(unix_home_directory_path, 'source-ports')
+        self.config_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'config')
+        self.source_ports_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'source-ports')
+        self.launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'launchers')
+        self.iwad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'iwad')
+        self.wad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'wad')
+
+
+class SourcePortBuilder(object):
+    def __init__(self, doom_config):
+        self.doom_config = doom_config
+
+    def get_source_ports(self):
+        source_ports = []
+        source_port_directories = next(os.walk(self.doom_config.unix_source_ports_path))[1]
+        port_version_pairs = [
+            tuple(directory.split('-')) for directory in source_port_directories
+        ]
+        for port_version_pair in port_version_pairs:
+            if port_version_pair[0] == 'crispy_doom':
+                source_ports.append(
+                    CrispyDoomSourcePort(
+                        '{0}\\{1}-{2}'.format(
+                            self.doom_config.source_ports_path,
+                            port_version_pair[0],
+                            port_version_pair[1]),
+                        port_version_pair[1],
+                        self.doom_config
+                    )
+                )
+        return source_ports
+
 
 class CliMenu(object):
-    def __init__(self, game_directory_path):
-        self.game_directory_path = game_directory_path
+    def __init__(self, game_data_path, doom_config):
+        self.game_data_path = game_data_path
+        self.doom_config = doom_config
 
     def get_source_port(self):
-        source_ports = [
-            PrBoomSourcePort("PrBoom", "C:\prboom-plus-2.5.1.4\glboom-plus.exe"),
-            DoomRetroSourcePort("Doom Retro", "C:\doomretro-3.0.2-win64\doomretro.exe"),
-            CrispyDoomSourcePort(
-                "Crispy Doom",
-                "C:\crispy-doom-5.6.2-win32\crispy-doom.exe",
-                "C:\crispy-doom-5.6.2-win32\crispy-doom.cfg")
-        ]
+        builder = SourcePortBuilder(self.doom_config)
+        source_ports = builder.get_source_ports()
+        print(source_ports[0].exe_path)
         print('Please select a source port:')
         for n, source_port in enumerate(source_ports, start=1):
             print('{0}. {1}'.format(n, source_port.name))
@@ -258,7 +293,7 @@ class CliMenu(object):
 
     def _get_game_list(self, source_port):
         games = []
-        os.chdir(self.game_directory_path)
+        os.chdir(self.game_data_path)
         for game_file in glob.glob('*.csv'):
             parser = GameParser(game_file)
             games.append(parser.parse_game(source_port))
@@ -276,11 +311,24 @@ class CliMenu(object):
                 print('Please enter a value between 1 and {0}.'.format(length))
 
 
+def get_doom_config():
+    windows_doom_home_path = os.getenv('WINDOWS_DOOM_HOME')
+    unix_doom_home_path = os.getenv('UNIX_DOOM_HOME')
+    windows_usernames = next(os.walk('/mnt/c/Users'))[1]
+    windows_username = next(
+        username for username in windows_usernames if username not in ['Default', 'Public'])
+    if not windows_doom_home_path:
+        windows_doom_home_path = 'C:\\Users\\{0}\\{1}'.format(windows_username, 'doom')
+    if not unix_doom_home_path:
+        unix_doom_home_path = os.path.join('/mnt/c/Users', windows_username, 'doom')
+    return DoomConfig(windows_doom_home_path, unix_doom_home_path)
+
 def main():
-    menu = CliMenu('./game-data')
+    doom_config = get_doom_config()
+    menu = CliMenu('./game-data', doom_config)
     source_port = menu.get_source_port()
-    game = menu.get_user_game_selection(source_port)
-    game.write_batch_files()
+    # game = menu.get_user_game_selection(source_port)
+    # game.write_batch_files()
 
 if __name__ == '__main__':
     sys.exit(main())
