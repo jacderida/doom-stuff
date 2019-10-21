@@ -10,6 +10,7 @@ $crispyDoomUrl = "https://github.com/fabiangreffrath/crispy-doom/releases/downlo
 $crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/crispy-doom-custom.cfg"
 $doomRetroVersion = "3.0.5"
 $doomRetroUrl = "https://github.com/bradharding/doomretro/releases/download/v$doomRetroVersion/doomretro-$doomRetroVersion-win64.zip"
+$doomRetroConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/doomretro-custom.cfg"
 
 $doomRootPath = Join-Path -Path (Get-Item env:"USERPROFILE").Value -ChildPath "doom"
 $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
@@ -64,6 +65,8 @@ function InstallDoomRetro {
         curl.exe -L -O $doomRetroUrl
         7z e doomretro-$doomRetroVersion-win64.zip
         rm doomretro-$doomRetroVersion-win64.zip
+        cd $configPath
+        curl.exe -L -O $doomRetroConfigUrl
         cd $pwd
     }
 }
