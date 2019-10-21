@@ -8,6 +8,9 @@ $prBoomUrl = "https://downloads.sourceforge.net/project/prboom-plus/prboom-plus/
 $crispyDoomVersion = "5.6.3"
 $crispyDoomUrl = "https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-$crispyDoomVersion/crispy-doom-$crispyDoomVersion-win32.zip"
 $crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/crispy-doom-custom.cfg"
+$doomRetroVersion = "3.0.5"
+$doomRetroUrl = "https://github.com/bradharding/doomretro/releases/download/v$doomRetroVersion/doomretro-$doomRetroVersion-win64.zip"
+
 $doomRootPath = Join-Path -Path (Get-Item env:"USERPROFILE").Value -ChildPath "doom"
 $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
 $configPath = Join-Path -Path $doomRootPath -ChildPath "config"
@@ -38,11 +41,11 @@ function CreateHomeDirectories {
 }
 
 function InstallCrispyDoom {
-    $local:crispyInstallPath = `
+    $local:installPath = `
         Join-Path -Path $sourcePortsPath -ChildPath "crispy_doom-$crispyDoomVersion"
-    if (!(Test-Path $crispyInstallPath)) {
-        New-Item -ItemType Directory -Path $crispyInstallPath
-        cd $crispyInstallPath
+    if (!(Test-Path $installPath)) {
+        New-Item -ItemType Directory -Path $installPath
+        cd $installPath
         curl.exe -L -O $crispyDoomUrl
         7z e crispy-doom-$crispyDoomVersion-win32.zip
         rm crispy-doom-$crispyDoomVersion-win32.zip
@@ -52,5 +55,19 @@ function InstallCrispyDoom {
     }
 }
 
+function InstallDoomRetro {
+    $local:installPath = `
+        Join-Path -Path $sourcePortsPath -ChildPath "doom_retro-$doomRetroVersion"
+    if (!(Test-Path $installPath)) {
+        New-Item -ItemType Directory -Path $installPath
+        cd $installPath
+        curl.exe -L -O $doomRetroUrl
+        7z e doomretro-$doomRetroVersion-win64.zip
+        rm doomretro-$doomRetroVersion-win64.zip
+        cd $pwd
+    }
+}
+
 CreateHomeDirectories
 InstallCrispyDoom
+InstallDoomRetro
