@@ -139,6 +139,56 @@ class PrBoomSourcePort(object):
             return '-warp {0} {1}'.format(episode.number, mission.number)
         raise ValueError('iwad {0} not supported yet'.format(game.iwad))
 
+class GzDoomSourcePort(object):
+    def __init__(self, install_path, version, doom_config):
+        self.friendly_name = 'GZDoom'
+        self.name = 'gzdoom'
+        self.config_name = 'gzdoom-Chris.ini'
+        self.install_path = install_path
+        self.exe_name = 'gzdoom.exe'
+        self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
+        self.version = version
+        self.doom_config = doom_config
+
+    def get_launch_commands(self, game, episode, mission):
+        commands = []
+        commands.append('set start=%cd%')
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.doom_config.config_path,
+            self.config_name,
+            self.install_path,
+            self.config_name))
+        commands.append('cd {0}'.format(self.install_path))
+        launch_command = '{0} '.format(self.exe_name)
+        launch_command += self._get_game_options(game)
+        launch_command += self._get_misc_options()
+        launch_command += self._get_skill_option()
+        launch_command += self._get_warp_option(game, episode, mission)
+        commands.append(launch_command)
+        commands.append('del {0}'.format(self.config_name))
+        commands.append('cd %start%')
+        return commands
+
+    def _get_game_options(self, game):
+        options = '-config {0} '.format(self.config_name)
+        options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
+        if game.wad:
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
+        return options
+
+    def _get_misc_options(self):
+        return '-nomusic -fullscreen '
+
+    def _get_skill_option(self):
+        return '-skill 4 '
+
+    def _get_warp_option(self, game, episode, mission):
+        if game.iwad == 'DOOM2.WAD':
+            return '-warp {0}'.format(str(mission.level).zfill(2))
+        elif game.iwad == 'DOOM.WAD':
+            return '-warp {0} {1}'.format(episode.number, mission.number)
+        raise ValueError('iwad {0} not supported yet'.format(game.iwad))
+
 
 class Game(object):
     def __init__(self, name, iwad, wad, complevel, release_date, source_ports, doom_config):
@@ -301,6 +351,17 @@ class SourcePortBuilder(object):
             elif port_version_pair[0] == 'doom_retro':
                 source_ports.append(
                     DoomRetroSourcePort(
+                        '{0}\\{1}-{2}'.format(
+                            self.doom_config.source_ports_path,
+                            port_version_pair[0],
+                            port_version_pair[1]),
+                        port_version_pair[1],
+                        self.doom_config
+                    )
+                )
+            elif port_version_pair[0] == 'gzdoom':
+                source_ports.append(
+                    GzDoomSourcePort(
                         '{0}\\{1}-{2}'.format(
                             self.doom_config.source_ports_path,
                             port_version_pair[0],

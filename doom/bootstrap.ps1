@@ -3,6 +3,7 @@ $zdoomUrl = "https://zdoom.org/files/zdoom/2.8/zdoom-$zdoomVersion.zip"
 $gzDoomVersion = "4.2.1"
 $gzDoomVersionHyphenSeparator = $gzDoomVersion.replace(".", "-")
 $gzDoomUrl = "https://github.com/coelckers/gzdoom/releases/download/g$gzDoomVersion/gzdoom-4-2-1-Windows-64bit.zip"
+$gzDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/gzdoom-Chris.ini"
 $prBoomVersion = "2.5.1.4"
 $prBoomUrl = "https://downloads.sourceforge.net/project/prboom-plus/prboom-plus/$prBoomVersion/prboom-plus-$prBoomVersion-win32.zip"
 $crispyDoomVersion = "5.6.3"
@@ -71,6 +72,22 @@ function InstallDoomRetro {
     }
 }
 
+function InstallGzDoom {
+    $local:installPath = `
+        Join-Path -Path $sourcePortsPath -ChildPath "gzdoom-$gzDoomVersion"
+    if (!(Test-Path $installPath)) {
+        New-Item -ItemType Directory -Path $installPath
+        cd $installPath
+        curl.exe -L -O $gzDoomUrl
+        7z e gzdoom-4-2-1-Windows-64bit.zip
+        rm gzdoom-4-2-1-Windows-64bit.zip
+        cd $configPath
+        curl.exe -L -O $gzDoomConfigUrl
+        cd $pwd
+    }
+}
+
 CreateHomeDirectories
 InstallCrispyDoom
 InstallDoomRetro
+InstallGzDoom
