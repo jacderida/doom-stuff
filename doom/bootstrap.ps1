@@ -1,6 +1,6 @@
 $zdoomVersion = "2.8.1"
 $zdoomUrl = "https://zdoom.org/files/zdoom/2.8/zdoom-$zdoomVersion.zip"
-$zDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/gzdoom-Chris.ini"
+$zdoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/gzdoom-Chris.ini"
 $gzDoomVersion = "4.2.1"
 $gzDoomVersionHyphenSeparator = $gzDoomVersion.replace(".", "-")
 $gzDoomUrl = "https://github.com/coelckers/gzdoom/releases/download/g$gzDoomVersion/gzdoom-4-2-1-Windows-64bit.zip"
@@ -9,10 +9,10 @@ $prBoomVersion = "2.5.1.4"
 $prBoomUrl = "https://downloads.sourceforge.net/project/prboom-plus/prboom-plus/$prBoomVersion/prboom-plus-$prBoomVersion-win32.zip"
 $crispyDoomVersion = "5.6.3"
 $crispyDoomUrl = "https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-$crispyDoomVersion/crispy-doom-$crispyDoomVersion-win32.zip"
-$crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/crispy-doom-custom.cfg"
+$crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/crispy-doom.cfg"
 $doomRetroVersion = "3.0.5"
 $doomRetroUrl = "https://github.com/bradharding/doomretro/releases/download/v$doomRetroVersion/doomretro-$doomRetroVersion-win64.zip"
-$doomRetroConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/doomretro-custom.cfg"
+$doomRetroConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/doomretro.cfg"
 
 $doomRootPath = Join-Path -Path (Get-Item env:"USERPROFILE").Value -ChildPath "doom"
 $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
@@ -98,7 +98,7 @@ function InstallZDoom {
         7z e zdoom-$zdoomVersion.zip
         rm zdoom-$zdoomVersion.zip
         cd $configPath
-        curl.exe -L -O $zDoomConfigUrl
+        curl.exe -L -O $zdoomConfigUrl
         cd $pwd
     }
 }
