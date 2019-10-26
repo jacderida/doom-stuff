@@ -43,68 +43,47 @@ function CreateHomeDirectories {
     }
 }
 
-function InstallCrispyDoom {
-    $local:installPath = `
-        Join-Path -Path $sourcePortsPath -ChildPath "crispy_doom-$crispyDoomVersion"
-    if (!(Test-Path $installPath)) {
-        New-Item -ItemType Directory -Path $installPath
-        cd $installPath
-        curl.exe -L -O $crispyDoomUrl
-        7z e crispy-doom-$crispyDoomVersion-win32.zip
-        rm crispy-doom-$crispyDoomVersion-win32.zip
-        cd $configPath
-        curl.exe -L -O $crispyDoomConfigUrl
-        cd $pwd
-    }
-}
+function InstallSourcePort {
+    Param(
+        [String]
+        $DirectoryName,
+        [String]
+        $SourcePortUrl,
+        [String]
+        $ConfigUrl
+    )
 
-function InstallDoomRetro {
     $local:installPath = `
-        Join-Path -Path $sourcePortsPath -ChildPath "doom_retro-$doomRetroVersion"
+        Join-Path -Path $sourcePortsPath -ChildPath $DirectoryName
+    $local:start = $SourcePortUrl.LastIndexOf('/') + 1
+    $local:len = $SourcePortUrl.Length - $start
+    $local:archiveName = $SourcePortUrl.Substring($start, $len)
     if (!(Test-Path $installPath)) {
         New-Item -ItemType Directory -Path $installPath
         cd $installPath
-        curl.exe -L -O $doomRetroUrl
-        7z e doomretro-$doomRetroVersion-win64.zip
-        rm doomretro-$doomRetroVersion-win64.zip
+        curl.exe -L -O $SourcePortUrl
+        7z e $archiveName
+        rm $archiveName
         cd $configPath
-        curl.exe -L -O $doomRetroConfigUrl
-        cd $pwd
-    }
-}
-
-function InstallGzDoom {
-    $local:installPath = `
-        Join-Path -Path $sourcePortsPath -ChildPath "gzdoom-$gzDoomVersion"
-    if (!(Test-Path $installPath)) {
-        New-Item -ItemType Directory -Path $installPath
-        cd $installPath
-        curl.exe -L -O $gzDoomUrl
-        7z e gzdoom-4-2-1-Windows-64bit.zip
-        rm gzdoom-4-2-1-Windows-64bit.zip
-        cd $configPath
-        curl.exe -L -O $gzDoomConfigUrl
-        cd $pwd
-    }
-}
-
-function InstallZDoom {
-    $local:installPath = `
-        Join-Path -Path $sourcePortsPath -ChildPath "zdoom-$gzDoomVersion"
-    if (!(Test-Path $installPath)) {
-        New-Item -ItemType Directory -Path $installPath
-        cd $installPath
-        curl.exe -L -O $zDoomUrl
-        7z e zdoom-$zdoomVersion.zip
-        rm zdoom-$zdoomVersion.zip
-        cd $configPath
-        curl.exe -L -O $zdoomConfigUrl
+        curl.exe -L -O $ConfigUrl
         cd $pwd
     }
 }
 
 CreateHomeDirectories
-InstallCrispyDoom
-InstallDoomRetro
-InstallGzDoom
-InstallZDoom
+InstallSourcePort `
+    -DirectoryName "crispy_doom-$crispyDoomVersion" `
+    -SourcePortUrl $crispyDoomUrl `
+    -ConfigUrl $crispyDoomConfigUrl
+InstallSourcePort `
+    -DirectoryName "doom_retro-$doomRetroVersion" `
+    -SourcePortUrl $doomRetroUrl `
+    -ConfigUrl $doomRetroConfigUrl
+InstallSourcePort `
+    -DirectoryName "gzdoom-$gzDoomVersion" `
+    -SourcePortUrl $gzDoomUrl `
+    -ConfigUrl $gzDoomConfigUrl
+InstallSourcePort `
+    -DirectoryName "zdoom-$zdoomVersion" `
+    -SourcePortUrl $zdoomUrl `
+    -ConfigUrl $zdoomConfigUrl
