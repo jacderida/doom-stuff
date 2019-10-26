@@ -6,16 +6,17 @@ import operator
 import os
 import shutil
 import sys
+from abc import ABC
 from collections import namedtuple
 
 
-class CrispyDoomSourcePort(object):
-    def __init__(self, install_path, version, doom_config):
-        self.friendly_name = 'Crispy Doom'
-        self.name = 'crispy'
-        self.config_name = 'crispy-doom-custom.cfg'
+class SourcePort(ABC):
+    def __init__(self, name, friendly_name, config_name, exe_name, install_path, version, doom_config):
+        self.friendly_name = friendly_name
+        self.name = name
+        self.config_name = config_name
         self.install_path = install_path
-        self.exe_name = 'crispy-doom.exe'
+        self.exe_name = exe_name
         self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
         self.version = version
         self.doom_config = doom_config
@@ -27,32 +28,32 @@ class CrispyDoomSourcePort(object):
             self.doom_config.config_path,
             self.config_name,
             self.install_path,
-            'crispy-doom.cfg'))
+            self.config_name))
         commands.append('cd {0}'.format(self.install_path))
         launch_command = '{0} '.format(self.exe_name)
-        launch_command += self._get_game_options(game)
-        launch_command += self._get_misc_options()
-        launch_command += self._get_skill_option()
-        launch_command += self._get_warp_option(game, episode, mission)
+        launch_command += self.get_game_options(game)
+        launch_command += self.get_misc_options()
+        launch_command += self.get_skill_option()
+        launch_command += self.get_warp_option(game, episode, mission)
         commands.append(launch_command)
-        commands.append('del crispy-doom.cfg')
+        commands.append('del {0}'.format(self.config_name))
         commands.append('cd %start%')
         return commands
 
-    def _get_game_options(self, game):
-        options = '-config {0} '.format('crispy-doom.cfg')
+    def get_game_options(self, game):
+        options = '-config {0} '.format(self.config_name)
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
         if game.wad:
             options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
         return options
 
-    def _get_misc_options(self):
+    def get_misc_options(self):
         return '-nomusic -fullscreen '
 
-    def _get_skill_option(self):
+    def get_skill_option(self):
         return '-skill 4 '
 
-    def _get_warp_option(self, game, episode, mission):
+    def get_warp_option(self, game, episode, mission):
         if game.iwad == 'DOOM2.WAD':
             return '-warp {0}'.format(str(mission.level).zfill(2))
         elif game.iwad == 'DOOM.WAD':
@@ -60,49 +61,23 @@ class CrispyDoomSourcePort(object):
         raise ValueError('iwad {0} not supported yet'.format(game.iwad))
 
 
-class DoomRetroSourcePort(object):
+class CrispyDoomSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
-        self.friendly_name = 'Doom Retro'
-        self.name = 'retro'
-        self.config_name = 'doomretro-custom.cfg'
-        self.install_path = install_path
-        self.exe_name = 'doomretro.exe'
-        self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
-        self.version = version
-        self.doom_config = doom_config
+        SourcePort.__init__(
+            self, 'crispy', 'Crispy Doom', 'crispy-doom.cfg',
+            'crispy-doom.exe', install_path, version, doom_config)
 
-    def get_launch_commands(self, game, episode, mission):
-        commands = []
-        commands.append('set start=%cd%')
-        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
-            self.doom_config.config_path,
-            self.config_name,
-            self.install_path,
-            'doomretro.cfg'))
-        commands.append('cd {0}'.format(self.install_path))
-        launch_command = '{0} '.format(self.exe_name)
-        launch_command += self._get_game_options(game)
-        launch_command += self._get_misc_options()
-        launch_command += self._get_skill_option()
-        launch_command += self._get_warp_option(game, episode, mission)
-        commands.append(launch_command)
-        commands.append('cd %start%')
-        return commands
 
-    def _get_game_options(self, game):
-        options = '-config {0} '.format('doomretro.cfg')
-        options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        if game.wad:
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
-        return options
+class DoomRetroSourcePort(SourcePort):
+    def __init__(self, install_path, version, doom_config):
+        SourcePort.__init__(
+            self, 'retro', 'Doom Retro', 'doomretro.cfg',
+            'doomretro.exe', install_path, version, doom_config)
 
-    def _get_misc_options(self):
+    def get_misc_options(self):
         return '-pistolstart -nomusic '
 
-    def _get_skill_option(self):
-        return '-skill 4 '
-
-    def _get_warp_option(self, game, episode, mission):
+    def get_warp_option(self, game, episode, mission):
         return '-warp E{0}M{1}'.format(episode.number, mission.number)
 
 
@@ -139,55 +114,12 @@ class PrBoomSourcePort(object):
             return '-warp {0} {1}'.format(episode.number, mission.number)
         raise ValueError('iwad {0} not supported yet'.format(game.iwad))
 
-class GzDoomSourcePort(object):
+
+class GzDoomSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
-        self.friendly_name = 'GZDoom'
-        self.name = 'gzdoom'
-        self.config_name = 'gzdoom-Chris.ini'
-        self.install_path = install_path
-        self.exe_name = 'gzdoom.exe'
-        self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
-        self.version = version
-        self.doom_config = doom_config
-
-    def get_launch_commands(self, game, episode, mission):
-        commands = []
-        commands.append('set start=%cd%')
-        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
-            self.doom_config.config_path,
-            self.config_name,
-            self.install_path,
-            self.config_name))
-        commands.append('cd {0}'.format(self.install_path))
-        launch_command = '{0} '.format(self.exe_name)
-        launch_command += self._get_game_options(game)
-        launch_command += self._get_misc_options()
-        launch_command += self._get_skill_option()
-        launch_command += self._get_warp_option(game, episode, mission)
-        commands.append(launch_command)
-        commands.append('del {0}'.format(self.config_name))
-        commands.append('cd %start%')
-        return commands
-
-    def _get_game_options(self, game):
-        options = '-config {0} '.format(self.config_name)
-        options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        if game.wad:
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
-        return options
-
-    def _get_misc_options(self):
-        return '-nomusic -fullscreen '
-
-    def _get_skill_option(self):
-        return '-skill 4 '
-
-    def _get_warp_option(self, game, episode, mission):
-        if game.iwad == 'DOOM2.WAD':
-            return '-warp {0}'.format(str(mission.level).zfill(2))
-        elif game.iwad == 'DOOM.WAD':
-            return '-warp {0} {1}'.format(episode.number, mission.number)
-        raise ValueError('iwad {0} not supported yet'.format(game.iwad))
+        SourcePort.__init__(
+            self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
+            'gzdoom.exe', install_path, version, doom_config)
 
 
 class Game(object):
@@ -208,6 +140,7 @@ class Game(object):
         for episode in self.episodes:
             for mission in episode.missions:
                 for source_port in self.source_ports:
+                    print('blah')
                     commands = source_port.get_launch_commands(self, episode, mission)
                     path = self._get_batch_file_path(episode, mission, source_port)
                     with open(path, 'w') as f:
