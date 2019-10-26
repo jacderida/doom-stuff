@@ -121,6 +121,12 @@ class GzDoomSourcePort(SourcePort):
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
             'gzdoom.exe', install_path, version, doom_config)
 
+class ZDoomSourcePort(SourcePort):
+    def __init__(self, install_path, version, doom_config):
+        SourcePort.__init__(
+            self, 'zdoom', 'ZDoom', 'zdoom-Chris.ini',
+            'zdoom.exe', install_path, version, doom_config)
+
 
 class Game(object):
     def __init__(self, name, iwad, wad, complevel, release_date, source_ports, doom_config):
@@ -270,39 +276,25 @@ class SourcePortBuilder(object):
             tuple(directory.split('-')) for directory in source_port_directories
         ]
         for port_version_pair in port_version_pairs:
-            if port_version_pair[0] == 'crispy_doom':
+            port_name, version = port_version_pair
+            install_path = '{0}\\{1}-{2}'.format(
+                self.doom_config.source_ports_path,
+                port_name,
+                version)
+            if port_name == 'crispy_doom':
                 source_ports.append(
-                    CrispyDoomSourcePort(
-                        '{0}\\{1}-{2}'.format(
-                            self.doom_config.source_ports_path,
-                            port_version_pair[0],
-                            port_version_pair[1]),
-                        port_version_pair[1],
-                        self.doom_config
-                    )
-                )
-            elif port_version_pair[0] == 'doom_retro':
+                    CrispyDoomSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'doom_retro':
                 source_ports.append(
-                    DoomRetroSourcePort(
-                        '{0}\\{1}-{2}'.format(
-                            self.doom_config.source_ports_path,
-                            port_version_pair[0],
-                            port_version_pair[1]),
-                        port_version_pair[1],
-                        self.doom_config
-                    )
-                )
-            elif port_version_pair[0] == 'gzdoom':
+                    DoomRetroSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'gzdoom':
                 source_ports.append(
-                    GzDoomSourcePort(
-                        '{0}\\{1}-{2}'.format(
-                            self.doom_config.source_ports_path,
-                            port_version_pair[0],
-                            port_version_pair[1]),
-                        port_version_pair[1],
-                        self.doom_config
-                    )
-                )
+                    GzDoomSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'zdoom':
+                source_ports.append(
+                    ZDoomSourcePort(install_path, version, self.doom_config))
+            else:
+                raise ValueError('{0} not supported. Please extend to support'.format(port_name))
         return source_ports
 
 
