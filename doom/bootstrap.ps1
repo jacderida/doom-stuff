@@ -7,6 +7,10 @@ $gzDoomUrl = "https://github.com/coelckers/gzdoom/releases/download/g$gzDoomVers
 $gzDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/gzdoom-Chris.ini"
 $prBoomVersion = "2.5.1.4"
 $prBoomUrl = "https://downloads.sourceforge.net/project/prboom-plus/prboom-plus/$prBoomVersion/prboom-plus-$prBoomVersion-win32.zip"
+$prBoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/prboom-plus.cfg"
+$glBoomVersion = "2.5.1.4"
+$glBoomUrl = "https://downloads.sourceforge.net/project/prboom-plus/prboom-plus/$glBoomVersion/prboom-plus-$glBoomVersion-win32.zip"
+$glBoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/glboom-plus.cfg"
 $crispyDoomVersion = "5.6.3"
 $crispyDoomUrl = "https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-$crispyDoomVersion/crispy-doom-$crispyDoomVersion-win32.zip"
 $crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/crispy-doom.cfg"
@@ -87,3 +91,11 @@ InstallSourcePort `
     -DirectoryName "zdoom-$zdoomVersion" `
     -SourcePortUrl $zdoomUrl `
     -ConfigUrl $zdoomConfigUrl
+InstallSourcePort `
+    -DirectoryName "prboom-$prBoomVersion" `
+    -SourcePortUrl $prBoomUrl `
+    -ConfigUrl $prBoomConfigUrl
+InstallSourcePort `
+    -DirectoryName "glboom-$glBoomVersion" `
+    -SourcePortUrl $glBoomUrl `
+    -ConfigUrl $glBoomConfigUrl

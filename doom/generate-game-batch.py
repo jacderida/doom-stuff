@@ -81,38 +81,30 @@ class DoomRetroSourcePort(SourcePort):
         return '-warp E{0}M{1}'.format(episode.number, mission.number)
 
 
-class PrBoomSourcePort(object):
-    def __init__(self, name, exe_path):
-        self.name = name
-        self.exe_path = exe_path
-
-    def get_launch_commands(self, game, episode, mission):
-        command = '{0} '.format(self.exe_path)
-        command += self._get_game_options(game)
-        command += self._get_misc_options()
-        command += self._get_skill_option()
-        command += self._get_warp_option(game, episode, mission)
-        return [command]
-
-    def _get_game_options(self, game):
-        command = '-iwad {0} '.format(game.iwad)
+class BoomSourcePort(SourcePort):
+    def get_game_options(self, game):
+        options = '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
         if game.wad:
-            command += '-file {0} '.format(game.wad)
-        command += '-complevel {0} '.format(game.complevel)
-        return command
+            options += '-file {0} '.format(game.wad)
+        options += '-complevel {0} '.format(game.complevel)
+        return options
 
-    def _get_skill_option(self):
-        return '-skill 4 '
-
-    def _get_misc_options(self):
+    def get_misc_options(self):
         return '-nowindow -noaccel -nomusic '
 
-    def _get_warp_option(self, game, episode, mission):
-        if game.iwad == 'DOOM2.WAD':
-            return '-warp {0}'.format(str(mission.level).zfill(2))
-        elif game.iwad == 'DOOM.WAD':
-            return '-warp {0} {1}'.format(episode.number, mission.number)
-        raise ValueError('iwad {0} not supported yet'.format(game.iwad))
+
+class PrBoomSourcePort(BoomSourcePort):
+    def __init__(self, install_path, version, doom_config):
+        SourcePort.__init__(
+            self, 'prboom', 'PRBoom-plus', 'prboom-plus.cfg',
+            'prboom-plus.exe', install_path, version, doom_config)
+
+
+class GlBoomSourcePort(BoomSourcePort):
+    def __init__(self, install_path, version, doom_config):
+        SourcePort.__init__(
+            self, 'glboom', 'GLBoom-plus', 'glboom-plus.cfg',
+            'glboom-plus.exe', install_path, version, doom_config)
 
 
 class GzDoomSourcePort(SourcePort):
@@ -120,6 +112,7 @@ class GzDoomSourcePort(SourcePort):
         SourcePort.__init__(
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
             'gzdoom.exe', install_path, version, doom_config)
+
 
 class ZDoomSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
@@ -146,7 +139,6 @@ class Game(object):
         for episode in self.episodes:
             for mission in episode.missions:
                 for source_port in self.source_ports:
-                    print('blah')
                     commands = source_port.get_launch_commands(self, episode, mission)
                     path = self._get_batch_file_path(episode, mission, source_port)
                     with open(path, 'w') as f:
@@ -293,6 +285,12 @@ class SourcePortBuilder(object):
             elif port_name == 'zdoom':
                 source_ports.append(
                     ZDoomSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'prboom':
+                source_ports.append(
+                    PrBoomSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'glboom':
+                source_ports.append(
+                    GlBoomSourcePort(install_path, version, self.doom_config))
             else:
                 raise ValueError('{0} not supported. Please extend to support'.format(port_name))
         return source_ports
