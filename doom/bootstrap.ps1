@@ -1,3 +1,5 @@
+Import-Module AWSPowerShell.NetCore
+
 $zdoomVersion = "2.8.1"
 $zdoomUrl = "https://zdoom.org/files/zdoom/2.8/zdoom-$zdoomVersion.zip"
 $zdoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/zdoom-Chris.ini"
@@ -76,6 +78,34 @@ function InstallSourcePort {
     }
 }
 
+function DownloadWad {
+    Param(
+        [String]
+        $SourceWadName
+    )
+
+    $local:destination = Join-Path -Path $wadPath -ChildPath $SourceWadName
+    if (!(Test-Path $destination)) {
+        Copy-S3Object `
+            -BucketName jacderida-games -Key wads/$SourceWadName -LocalFile $destination `
+            -ProfileName s3
+    }
+}
+
+function DownloadIwad {
+    Param(
+        [String]
+        $SourceWadName
+    )
+
+    $local:destination = Join-Path -Path $iwadPath -ChildPath $SourceWadName
+    if (!(Test-Path $destination)) {
+        Copy-S3Object `
+            -BucketName jacderida-games -Key iwads/$SourceWadName -LocalFile $destination `
+            -ProfileName s3
+    }
+}
+
 CreateHomeDirectories
 InstallSourcePort `
     -DirectoryName "crispy_doom-$crispyDoomVersion" `
@@ -105,3 +135,6 @@ InstallSourcePort `
     -DirectoryName "marshmallow_doom-$marshmallowDoomVersion" `
     -SourcePortUrl $marshmallowDoomUrl `
     -ConfigUrl $marshmallowDoomConfigUrl
+DownloadIwad -SourceWadName "DOOM.WAD"
+DownloadIwad -SourceWadName "DOOM2.WAD"
+DownloadWad -SourceWadName "SIGIL_v1_21.wad"
