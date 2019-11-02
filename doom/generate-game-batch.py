@@ -68,6 +68,13 @@ class CrispyDoomSourcePort(SourcePort):
             'crispy-doom.exe', install_path, version, doom_config)
 
 
+class MarshmallowDoomSourcePort(SourcePort):
+    def __init__(self, install_path, version, doom_config):
+        SourcePort.__init__(
+            self, 'marshmallow', 'Marshmallow Doom', 'marshmallow-doom.cfg',
+            'marshmallow-doom.exe', install_path, version, doom_config)
+
+
 class DoomRetroSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
@@ -161,9 +168,14 @@ class Game(object):
             source_port.name)
         if not os.path.exists(game_launcher_path):
             os.makedirs(game_launcher_path)
+        # SIGIL is a strange special case: they've called it Episode 5 of Doom,
+        # but for some reason it appears in place of episode 3, meaning the warp
+        # option needs to use 3 X. For that reason, the data file needs to specify
+        # it as episode 3, but I still want the batch files to use episode 5.
+        episode_number = episode.number if self.name != "SIGIL" else 5
         batch_file_name = 'MAP{0} -- E{1}M{2} -- {3}.bat'.format(
             str(mission.level).zfill(2),
-            str(episode.number).zfill(2),
+            str(episode_number).zfill(2),
             str(mission.number).zfill(2),
             mission.name)
         return os.path.join(game_launcher_path, batch_file_name)
@@ -244,6 +256,7 @@ class GameParser(object):
                 episode_boundaries[episode] = (start, index)
         return episode_boundaries
 
+
 class DoomConfig(object):
     def __init__(self, windows_home_directory_path, unix_home_directory_path):
         self.windows_home_directory_path = windows_home_directory_path
@@ -267,8 +280,7 @@ class SourcePortBuilder(object):
         port_version_pairs = [
             tuple(directory.split('-')) for directory in source_port_directories
         ]
-        for port_version_pair in port_version_pairs:
-            port_name, version = port_version_pair
+        for port_name, version in port_version_pairs:
             install_path = '{0}\\{1}-{2}'.format(
                 self.doom_config.source_ports_path,
                 port_name,
@@ -291,6 +303,9 @@ class SourcePortBuilder(object):
             elif port_name == 'glboom':
                 source_ports.append(
                     GlBoomSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'marshmallow_doom':
+                source_ports.append(
+                    MarshmallowDoomSourcePort(install_path, version, self.doom_config))
             else:
                 raise ValueError('{0} not supported. Please extend to support'.format(port_name))
         return source_ports
@@ -320,7 +335,7 @@ class CliMenu(object):
             print('{0}. {1} -- {2}'.format(n, game.release_date, game.name))
         print('Please select the game to generate batch files for:')
         selection = self._get_valid_input(len(games))
-        return games[selection - 1]
+        return games_sorted_by_date[selection - 1]
 
     def _display_banner(self):
         print('=========================')

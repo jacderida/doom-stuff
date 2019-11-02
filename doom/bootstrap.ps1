@@ -138,3 +138,4 @@ InstallSourcePort `
 DownloadIwad -SourceWadName "DOOM.WAD"
 DownloadIwad -SourceWadName "DOOM2.WAD"
 DownloadWad -SourceWadName "SIGIL_v1_21.wad"
+DownloadWad -SourceWadName "SIGIL_COMPAT_v1_21.wad"

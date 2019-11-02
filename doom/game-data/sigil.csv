@@ -1,0 +1,10 @@
+game_name,iwad,pwad,complevel,release_date,episode_name,episode_number,mission_name,mission_number,level_number,is_secret
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Baphomet's Demesne,1,1,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Sheol,2,2,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Cages of the Damned,3,3,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Paths of Wretchedness,4,4,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Abaddon's Void,5,5,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Unspeakable Persecution,6,6,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Nightmare Underword,7,7,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Halls of Perdition,8,8,false
+SIGIL,DOOM.WAD,SIGIL_COMPAT_v1_21.wad,3,2019-05-22,SIGIL,3,Realm of Iblis,9,9,true
