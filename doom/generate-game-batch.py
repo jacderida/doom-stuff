@@ -20,8 +20,12 @@ class SourcePort(ABC):
         self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
         self.version = version
         self.doom_config = doom_config
+        self.configurations = ["music", "nomusic"]
 
-    def get_launch_commands(self, game, episode, mission):
+    def get_configurations(self):
+        return self.configurations
+
+    def get_launch_commands(self, game, episode, mission, configuration):
         commands = []
         commands.append('set start=%cd%')
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
@@ -32,17 +36,19 @@ class SourcePort(ABC):
         commands.append('cd {0}'.format(self.install_path))
         launch_command = '{0} '.format(self.exe_name)
         launch_command += self.get_game_options(game)
-        launch_command += self.get_misc_options()
+        launch_command += self.get_misc_options(configuration)
         launch_command += self.get_skill_option()
         launch_command += self.get_warp_option(game, episode, mission)
         commands.append(launch_command)
-        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
-            self.install_path,
-            self.config_name,
-            self.doom_config.config_path,
-            self.config_name))
         commands.append('cd %start%')
+        [commands.append(x) for x in self.get_post_game_config_commands()]
         return commands
+
+    def get_post_game_config_commands(self):
+        return [
+            'del {0}'.format(self.config_name),
+            'cd %start'
+        ]
 
     def get_game_options(self, game):
         options = '-config {0} '.format(self.config_name)
@@ -51,8 +57,11 @@ class SourcePort(ABC):
             options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
         return options
 
-    def get_misc_options(self):
-        return '-nomusic -fullscreen '
+    def get_misc_options(self, configuration):
+        options = '-fullscreen '
+        if configuration == 'nomusic':
+            options += '-nomusic '
+        return options
 
     def get_skill_option(self):
         return '-skill 4 '
@@ -85,8 +94,12 @@ class DoomRetroSourcePort(SourcePort):
             self, 'retro', 'Doom Retro', 'doomretro.cfg',
             'doomretro.exe', install_path, version, doom_config)
 
-    def get_misc_options(self):
-        return '-pistolstart -nomusic '
+    def get_misc_options(self, configuration):
+        options = '-fullscreen '
+        options += '-pistolstart '
+        if configuration == 'nomusic':
+            options += '-nomusic '
+        return options
 
     def get_warp_option(self, game, episode, mission):
         return '-warp E{0}M{1}'.format(episode.number, mission.number)
@@ -100,8 +113,11 @@ class BoomSourcePort(SourcePort):
         options += '-complevel {0} '.format(game.complevel)
         return options
 
-    def get_misc_options(self):
-        return '-nowindow -noaccel -nomusic '
+    def get_misc_options(self, configuration):
+        options = '-nowindow -noaccel '
+        if configuration == 'nomusic':
+            options += '-nomusic '
+        return options
 
 
 class PrBoomSourcePort(BoomSourcePort):
@@ -123,6 +139,17 @@ class GzDoomSourcePort(SourcePort):
         SourcePort.__init__(
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
             'gzdoom.exe', install_path, version, doom_config)
+
+    def get_post_game_config_commands(self):
+        commands = []
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.install_path,
+            self.config_name,
+            self.doom_config.config_path,
+            self.config_name))
+        commands.append('del {0}'.format(self.config_name))
+        commands.append('cd %start')
+        return commands
 
 
 class ZDoomSourcePort(SourcePort):
@@ -150,26 +177,28 @@ class Game(object):
         for episode in self.episodes:
             for mission in episode.missions:
                 for source_port in self.source_ports:
-                    commands = source_port.get_launch_commands(self, episode, mission)
-                    path = self._get_batch_file_path(episode, mission, source_port)
-                    with open(path, 'w') as f:
-                        print('Writing {0}'.format(path))
-                        f.write('@echo off')
-                        f.write(os.linesep)
-                        f.write('echo "Playing {0} E{1}M{2}: {3}"{4}'.format(
-                            self.name,
-                            str(episode.number).zfill(2),
-                            str(mission.number).zfill(2),
-                            mission.name,
-                            os.linesep))
-                        for command in commands:
-                            f.write(command + os.linesep)
+                    for config in source_port.get_configurations():
+                        commands = source_port.get_launch_commands(self, episode, mission, config)
+                        path = self._get_batch_file_path(episode, mission, source_port, config)
+                        with open(path, 'w') as f:
+                            print('Writing {0}'.format(path))
+                            f.write('@echo off')
+                            f.write(os.linesep)
+                            f.write('echo "Playing {0} E{1}M{2}: {3}"{4}'.format(
+                                self.name,
+                                str(episode.number).zfill(2),
+                                str(mission.number).zfill(2),
+                                mission.name,
+                                os.linesep))
+                            for command in commands:
+                                f.write(command + os.linesep)
 
-    def _get_batch_file_path(self, episode, mission, source_port):
+    def _get_batch_file_path(self, episode, mission, source_port, config):
         game_launcher_path = os.path.join(
             self.doom_config.unix_launchers_path,
             '{0} -- {1}'.format(self.release_date, self.name.replace(':', ' --')),
-            source_port.name)
+            source_port.name,
+            config)
         if not os.path.exists(game_launcher_path):
             os.makedirs(game_launcher_path)
         # SIGIL is a strange special case: they've called it Episode 5 of Doom,
@@ -181,7 +210,7 @@ class Game(object):
             str(mission.level).zfill(2),
             str(episode_number).zfill(2),
             str(mission.number).zfill(2),
-            mission.name)
+            mission.get_name_for_path())
         return os.path.join(game_launcher_path, batch_file_name)
 
 
