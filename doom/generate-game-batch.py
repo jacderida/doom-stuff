@@ -193,8 +193,10 @@ class Game(object):
             for mission in episode.missions:
                 for source_port in self.source_ports:
                     for config in source_port.get_configurations():
-                        commands = source_port.get_launch_commands(self, episode, mission, config)
-                        path = self._get_batch_file_path(episode, mission, source_port, config)
+                        commands = source_port.get_launch_commands(
+                            self, episode, mission, config)
+                        path = self._get_batch_file_path(
+                            episode, mission, source_port, config)
                         with open(path, 'w') as f:
                             print('Writing {0}'.format(path))
                             f.write('@echo off')
@@ -382,9 +384,13 @@ class CliMenu(object):
         print('The following games were found:')
         for n, game in enumerate(games_sorted_by_date, start=1):
             print('{0}. {1} -- {2}'.format(n, game.release_date, game.name))
+        all_option = len(games) + 1
+        print('{0}. All'.format(all_option))
         print('Please select the game to generate batch files for:')
-        selection = self._get_valid_input(len(games))
-        return games_sorted_by_date[selection - 1]
+        selection = self._get_valid_input(len(games) + 1)
+        if selection == all_option:
+            return games_sorted_by_date
+        return [games_sorted_by_date[selection - 1]]
 
     def _display_banner(self):
         print('=========================')
@@ -430,8 +436,9 @@ def main():
     doom_config = get_doom_config()
     menu = CliMenu('./game-data', doom_config)
     menu.display_source_ports()
-    game = menu.get_user_game_selection()
-    game.write_batch_files()
+    games = menu.get_user_game_selection()
+    for game in games:
+        game.write_batch_files()
 
 if __name__ == '__main__':
     sys.exit(main())
