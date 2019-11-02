@@ -36,7 +36,11 @@ class SourcePort(ABC):
         launch_command += self.get_skill_option()
         launch_command += self.get_warp_option(game, episode, mission)
         commands.append(launch_command)
-        commands.append('del {0}'.format(self.config_name))
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.install_path,
+            self.config_name,
+            self.doom_config.config_path,
+            self.config_name))
         commands.append('cd %start%')
         return commands
 
