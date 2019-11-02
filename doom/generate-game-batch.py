@@ -145,12 +145,14 @@ class GzDoomSourcePort(SourcePort):
         SourcePort.__init__(
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
             'gzdoom.exe', install_path, version, doom_config)
-        self.configurations = ["music", "nomusic", "smooth"]
+        self.configurations = ["music", "nomusic", "smooth", "beautiful"]
 
     def get_mod_options(self, configuration):
         options = ''
         if configuration == "smooth":
             options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'SmoothDoom.pk3')
+        elif configuration == "beautiful":
+            options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'BDoom632.pk3')
         return options
 
     def get_post_game_config_commands(self):
