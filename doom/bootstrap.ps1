@@ -27,6 +27,7 @@ $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
 $configPath = Join-Path -Path $doomRootPath -ChildPath "config"
 $iwadPath = Join-Path -Path $doomRootPath -ChildPath "iwads"
 $wadPath = Join-Path -Path $doomRootPath -ChildPath "wads"
+$modPath = Join-Path -Path $doomRootPath -ChildPath "mods"
 $pwd = Get-Location
 
 function CreateHomeDirectories {
@@ -44,6 +45,9 @@ function CreateHomeDirectories {
     }
     if (!(Test-Path $wadPath)) {
         New-Item -ItemType Directory -Path $wadPath
+    }
+    if (!(Test-Path $modPath)) {
+        New-Item -ItemType Directory -Path $modPath
     }
     $local:launchersPath = Join-Path -Path $doomRootPath -ChildPath "launchers"
     if (!(Test-Path $launchersPath)) {
@@ -81,13 +85,13 @@ function InstallSourcePort {
 function DownloadWad {
     Param(
         [String]
-        $SourceWadName
+        $Name
     )
 
-    $local:destination = Join-Path -Path $wadPath -ChildPath $SourceWadName
+    $local:destination = Join-Path -Path $wadPath -ChildPath $Name
     if (!(Test-Path $destination)) {
         Copy-S3Object `
-            -BucketName jacderida-games -Key wads/$SourceWadName -LocalFile $destination `
+            -BucketName jacderida-games -Key wads/$Name -LocalFile $destination `
             -ProfileName s3
     }
 }
@@ -95,13 +99,27 @@ function DownloadWad {
 function DownloadIwad {
     Param(
         [String]
-        $SourceWadName
+        $Name
     )
 
-    $local:destination = Join-Path -Path $iwadPath -ChildPath $SourceWadName
+    $local:destination = Join-Path -Path $iwadPath -ChildPath $Name
     if (!(Test-Path $destination)) {
         Copy-S3Object `
-            -BucketName jacderida-games -Key iwads/$SourceWadName -LocalFile $destination `
+            -BucketName jacderida-games -Key iwads/$Name -LocalFile $destination `
+            -ProfileName s3
+    }
+}
+
+function DownloadMod {
+    Param(
+        [String]
+        $Name
+    )
+
+    $local:destination = Join-Path -Path $modPath -ChildPath $Name
+    if (!(Test-Path $destination)) {
+        Copy-S3Object `
+            -BucketName jacderida-games -Key mods/$Name -LocalFile $destination `
             -ProfileName s3
     }
 }
@@ -135,9 +153,10 @@ InstallSourcePort `
     -DirectoryName "marshmallow_doom-$marshmallowDoomVersion" `
     -SourcePortUrl $marshmallowDoomUrl `
     -ConfigUrl $marshmallowDoomConfigUrl
-DownloadIwad -SourceWadName "DOOM.WAD"
-DownloadIwad -SourceWadName "DOOM2.WAD"
-DownloadWad -SourceWadName "SIGIL_v1_21.wad"
-DownloadWad -SourceWadName "SIGIL_COMPAT_v1_21.wad"
-DownloadWad -SourceWadName "PLUTONIA.WAD"
-DownloadWad -SourceWadName "TNT.WAD"
+DownloadIwad -Name "DOOM.WAD"
+DownloadIwad -Name "DOOM2.WAD"
+DownloadWad -Name "SIGIL_v1_21.wad"
+DownloadWad -Name "SIGIL_COMPAT_v1_21.wad"
+DownloadWad -Name "PLUTONIA.WAD"
+DownloadWad -Name "TNT.WAD"
+DownloadMod -Name "SmoothDoom.pk3"

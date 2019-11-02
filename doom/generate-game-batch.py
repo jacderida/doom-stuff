@@ -36,6 +36,9 @@ class SourcePort(ABC):
         commands.append('cd {0}'.format(self.install_path))
         launch_command = '{0} '.format(self.exe_name)
         launch_command += self.get_game_options(game)
+        mod_options = self.get_mod_options(configuration)
+        if mod_options:
+            launch_command += mod_options
         launch_command += self.get_misc_options(configuration)
         launch_command += self.get_skill_option()
         launch_command += self.get_warp_option(game, episode, mission)
@@ -43,6 +46,9 @@ class SourcePort(ABC):
         commands.append('cd %start%')
         [commands.append(x) for x in self.get_post_game_config_commands()]
         return commands
+
+    def get_mod_options(self, configuration):
+        return ''
 
     def get_post_game_config_commands(self):
         return [
@@ -139,6 +145,13 @@ class GzDoomSourcePort(SourcePort):
         SourcePort.__init__(
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
             'gzdoom.exe', install_path, version, doom_config)
+        self.configurations = ["music", "nomusic", "smooth"]
+
+    def get_mod_options(self, configuration):
+        options = ''
+        if configuration == "smooth":
+            options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'SmoothDoom.pk3')
+        return options
 
     def get_post_game_config_commands(self):
         commands = []
@@ -301,6 +314,7 @@ class DoomConfig(object):
         self.launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'launchers')
         self.iwad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'iwads')
         self.wad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'wads')
+        self.mod_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'mods')
 
 
 class SourcePortBuilder(object):
