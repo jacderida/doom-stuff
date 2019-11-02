@@ -17,7 +17,9 @@ $crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/m
 $doomRetroVersion = "3.0.5"
 $doomRetroUrl = "https://github.com/bradharding/doomretro/releases/download/v$doomRetroVersion/doomretro-$doomRetroVersion-win64.zip"
 $doomRetroConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/doomretro.cfg"
-
+$marshmallowDoomVersion = "0.77"
+$marshmallowDoomUrl = "http://www.marshmallowdoom.com/downloads/marshmallow-doom.zip"
+$marshmallowDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/doomretro.cfg"
 $doomRootPath = Join-Path -Path (Get-Item env:"USERPROFILE").Value -ChildPath "doom"
 $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
 $configPath = Join-Path -Path $doomRootPath -ChildPath "config"
@@ -99,3 +101,7 @@ InstallSourcePort `
     -DirectoryName "glboom-$glBoomVersion" `
     -SourcePortUrl $glBoomUrl `
     -ConfigUrl $glBoomConfigUrl
+InstallSourcePort `
+    -DirectoryName "marshmallow_doom-$marshmallowDoomVersion" `
+    -SourcePortUrl $marshmallowDoomUrl `
+    -ConfigUrl $marshmallowDoomConfigUrl
