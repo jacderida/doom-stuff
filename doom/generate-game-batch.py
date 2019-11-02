@@ -109,7 +109,7 @@ class BoomSourcePort(SourcePort):
     def get_game_options(self, game):
         options = '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
         if game.wad:
-            options += '-file {0} '.format(game.wad)
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
         options += '-complevel {0} '.format(game.complevel)
         return options
 
@@ -299,8 +299,8 @@ class DoomConfig(object):
         self.config_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'config')
         self.source_ports_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'source-ports')
         self.launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'launchers')
-        self.iwad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'iwad')
-        self.wad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'wad')
+        self.iwad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'iwads')
+        self.wad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'wads')
 
 
 class SourcePortBuilder(object):

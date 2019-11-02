@@ -25,8 +25,8 @@ $marshmallowDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-st
 $doomRootPath = Join-Path -Path (Get-Item env:"USERPROFILE").Value -ChildPath "doom"
 $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
 $configPath = Join-Path -Path $doomRootPath -ChildPath "config"
-$iwadPath = Join-Path -Path $doomRootPath -ChildPath "iwad"
-$wadPath = Join-Path -Path $doomRootPath -ChildPath "wad"
+$iwadPath = Join-Path -Path $doomRootPath -ChildPath "iwads"
+$wadPath = Join-Path -Path $doomRootPath -ChildPath "wads"
 $pwd = Get-Location
 
 function CreateHomeDirectories {
