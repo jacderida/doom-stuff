@@ -20,7 +20,7 @@ class SourcePort(ABC):
         self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
         self.version = version
         self.doom_config = doom_config
-        self.configurations = ["music", "nomusic"]
+        self.configurations = ["music", "nomusic", "nomonsters"]
 
     def get_configurations(self):
         return self.configurations
@@ -67,6 +67,8 @@ class SourcePort(ABC):
         options = '-fullscreen '
         if configuration == 'nomusic':
             options += '-nomusic '
+        elif configuration == 'nomonsters':
+            options += '-nomonsters '
         return options
 
     def get_skill_option(self):
@@ -145,7 +147,7 @@ class GzDoomSourcePort(SourcePort):
         SourcePort.__init__(
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
             'gzdoom.exe', install_path, version, doom_config)
-        self.configurations = ["music", "nomusic", "smooth", "beautiful"]
+        self.configurations = ["music", "nomusic", "smooth", "beautiful", "nomonsters"]
 
     def get_mod_options(self, configuration):
         options = ''
