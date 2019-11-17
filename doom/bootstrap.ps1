@@ -161,8 +161,9 @@ DownloadWad -Name "PLUTONIA.WAD"
 DownloadWad -Name "TNT.WAD"
 DownloadWad -Name "HR.WAD"
 DownloadWad -Name "hr2final.wad"
-DownloadWad -Name "pk_doom_sfx.wad" # High resolution sound effects
+DownloadWad -Name "pk_doom_sfx.wad" # Subtle high resolution sound effect improvements
 DownloadWad -Name "D1SPFX19.WAD" # Minor sprite fixes for DOOM 1
 DownloadWad -Name "D2SPFX19.WAD" # Minor sprite fixes for DOOM 2
 DownloadMod -Name "SmoothDoom.pk3" # Smooth Doom for improved animations
 DownloadMod -Name "BDoom632.pk3" # Beautiful Doom for improved animations and others
+DownloadMod -Name "idclever-starter.pk3" # Pistol starts for GZDoom

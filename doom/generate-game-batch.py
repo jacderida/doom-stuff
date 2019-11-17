@@ -161,10 +161,11 @@ class GzDoomSourcePort(SourcePort):
 
     def get_mod_options(self, configuration):
         options = ''
-        if configuration == "smooth":
+        if configuration == 'smooth':
             options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'SmoothDoom.pk3')
-        elif configuration == "beautiful":
+        elif configuration == 'beautiful':
             options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'BDoom632.pk3')
+        options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'idclever-starter.pk3')
         return options
 
     def get_post_game_config_commands(self):
