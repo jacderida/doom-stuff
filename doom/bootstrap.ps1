@@ -161,5 +161,8 @@ DownloadWad -Name "PLUTONIA.WAD"
 DownloadWad -Name "TNT.WAD"
 DownloadWad -Name "HR.WAD"
 DownloadWad -Name "hr2final.wad"
-DownloadMod -Name "SmoothDoom.pk3"
-DownloadMod -Name "BDoom632.pk3"
+DownloadWad -Name "pk_doom_sfx.wad" # High resolution sound effects
+DownloadWad -Name "D1SPFX19.WAD" # Minor sprite fixes for DOOM 1
+DownloadWad -Name "D2SPFX19.WAD" # Minor sprite fixes for DOOM 2
+DownloadMod -Name "SmoothDoom.pk3" # Smooth Doom for improved animations
+DownloadMod -Name "BDoom632.pk3" # Beautiful Doom for improved animations and others

@@ -42,7 +42,8 @@ class SourcePort(ABC):
         launch_command += self.get_misc_options(configuration)
         launch_command += self.get_skill_option()
         launch_command += self.get_warp_option(game, episode, mission)
-        commands.append(launch_command)
+        launch_command += self.get_low_priority_wads(game)
+        commands.append(launch_command.strip())
         commands.append('cd %start%')
         [commands.append(x) for x in self.get_post_game_config_commands()]
         return commands
@@ -76,10 +77,19 @@ class SourcePort(ABC):
 
     def get_warp_option(self, game, episode, mission):
         if game.iwad == 'DOOM2.WAD':
-            return '-warp {0}'.format(str(mission.level).zfill(2))
+            return '-warp {0} '.format(str(mission.level).zfill(2))
         elif game.iwad == 'DOOM.WAD':
-            return '-warp {0} {1}'.format(episode.number, mission.number)
+            return '-warp {0} {1} '.format(episode.number, mission.number)
         raise ValueError('iwad {0} not supported yet'.format(game.iwad))
+
+    def get_low_priority_wads(self, game):
+        options = ''
+        if game.iwad == 'DOOM.WAD':
+            options += '-file {0}\\D1SPFX19.WAD '.format(self.doom_config.wad_path)
+        elif game.iwad == 'DOOM2.WAD':
+            options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
+        options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
+        return options
 
 
 class CrispyDoomSourcePort(SourcePort):
@@ -110,7 +120,7 @@ class DoomRetroSourcePort(SourcePort):
         return options
 
     def get_warp_option(self, game, episode, mission):
-        return '-warp E{0}M{1}'.format(episode.number, mission.number)
+        return '-warp E{0}M{1} '.format(episode.number, mission.number)
 
 
 class BoomSourcePort(SourcePort):
