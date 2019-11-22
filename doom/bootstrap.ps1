@@ -96,6 +96,30 @@ function DownloadWad {
     }
 }
 
+function DownloadMasterLevels {
+    DownloadWad -Name "ATTACK.WAD"
+    DownloadWad -Name "CANYON.WAD"
+    DownloadWad -Name "CATWALK.WAD"
+    DownloadWad -Name "COMBINE.WAD"
+    DownloadWad -Name "FISTULA.WAD"
+    DownloadWad -Name "GARRISON.WAD"
+    DownloadWad -Name "MANOR.WAD"
+    DownloadWad -Name "PARADOX.WAD"
+    DownloadWad -Name "SUBSPACE.WAD"
+    DownloadWad -Name "SUBTERRA.WAD"
+    DownloadWad -Name "TTRAP.WAD"
+    DownloadWad -Name "VIRGIL.WAD"
+    DownloadWad -Name "MINOS.WAD"
+    DownloadWad -Name "BLOODSEA.WAD"
+    DownloadWad -Name "MEPHISTO.WAD"
+    DownloadWad -Name "NESSUS.WAD"
+    DownloadWad -Name "GERYON.WAD"
+    DownloadWad -Name "VESPERAS.WAD"
+    DownloadWad -Name "BLACKTWR.WAD"
+    DownloadWad -Name "TEETH.WAD"
+    DownloadWad -Name "TEETH.WAD"
+}
+
 function DownloadIwad {
     Param(
         [String]
@@ -155,6 +179,7 @@ InstallSourcePort `
     -ConfigUrl $marshmallowDoomConfigUrl
 DownloadIwad -Name "DOOM.WAD"
 DownloadIwad -Name "DOOM2.WAD"
+DownloadMasterLevels
 DownloadWad -Name "SIGIL_v1_21.wad"
 DownloadWad -Name "SIGIL_COMPAT_v1_21.wad"
 DownloadWad -Name "PLUTONIA.WAD"
