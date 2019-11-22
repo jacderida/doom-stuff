@@ -35,7 +35,7 @@ class SourcePort(ABC):
             self.config_name))
         commands.append('cd {0}'.format(self.install_path))
         launch_command = '{0} '.format(self.exe_name)
-        launch_command += self.get_game_options(game)
+        launch_command += self.get_game_options(game, mission)
         mod_options = self.get_mod_options(configuration)
         if mod_options:
             launch_command += mod_options
@@ -57,11 +57,11 @@ class SourcePort(ABC):
             'cd %start'
         ]
 
-    def get_game_options(self, game):
+    def get_game_options(self, game, mission):
         options = '-config {0} '.format(self.config_name)
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        if game.wad:
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
+        if mission.wad:
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, mission.wad)
         return options
 
     def get_misc_options(self, configuration):
@@ -124,10 +124,10 @@ class DoomRetroSourcePort(SourcePort):
 
 
 class BoomSourcePort(SourcePort):
-    def get_game_options(self, game):
+    def get_game_options(self, game, mission):
         options = '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        if game.wad:
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.wad)
+        if mission.wad:
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, mission.wad)
         options += '-complevel {0} '.format(game.complevel)
         return options
 
@@ -188,10 +188,9 @@ class ZDoomSourcePort(SourcePort):
 
 
 class Game(object):
-    def __init__(self, name, iwad, wad, complevel, release_date, source_ports, doom_config):
+    def __init__(self, name, iwad, complevel, release_date, source_ports, doom_config):
         self.name = name
         self.iwad = iwad
-        self.wad = wad
         self.complevel = complevel
         self.release_date = release_date
         self.episodes = []
@@ -255,10 +254,11 @@ class Episode(object):
 
 
 class Mission(object):
-    def __init__(self, name, number, level, is_secret_level=False):
+    def __init__(self, name, number, level, wad, is_secret_level=False):
         self.name = name
         self.number = number
         self.level = level
+        self.wad = wad
         self.is_secret = is_secret_level
 
     def get_name_for_path(self):
@@ -276,7 +276,6 @@ class GameParser(object):
         game = Game(
             game_data[0].game_name,
             game_data[0].iwad,
-            game_data[0].pwad,
             game_data[0].complevel,
             game_data[0].release_date,
             source_ports,
@@ -293,6 +292,7 @@ class GameParser(object):
                     game_data[i].mission_name,
                     int(game_data[i].mission_number),
                     int(game_data[i].level_number),
+                    game_data[i].pwad,
                     is_secret_level=is_secret_level))
             game.add_episode(episode)
         return game
