@@ -76,7 +76,9 @@ class SourcePort(ABC):
         return '-skill 4 '
 
     def get_warp_option(self, game, episode, mission):
-        if game.iwad == 'DOOM2.WAD':
+        if game.name == 'Master Levels for Doom II':
+            return '-warp 01 '
+        elif game.iwad == 'DOOM2.WAD':
             return '-warp {0} '.format(str(mission.level).zfill(2))
         elif game.iwad == 'DOOM.WAD':
             return '-warp {0} {1} '.format(episode.number, mission.number)
