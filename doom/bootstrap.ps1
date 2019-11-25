@@ -187,6 +187,7 @@ DownloadWad -Name "TNT.WAD"
 DownloadWad -Name "HR.WAD"
 DownloadWad -Name "hr2final.wad"
 DownloadWad -Name "oku2v31.wad"
+DownloadWad -Name "Eviternity.wad"
 DownloadWad -Name "pk_doom_sfx.wad" # Subtle high resolution sound effect improvements
 DownloadWad -Name "D1SPFX19.WAD" # Minor sprite fixes for DOOM 1
 DownloadWad -Name "D2SPFX19.WAD" # Minor sprite fixes for DOOM 2
