@@ -3,9 +3,9 @@ Import-Module AWSPowerShell.NetCore
 $zdoomVersion = "2.8.1"
 $zdoomUrl = "https://zdoom.org/files/zdoom/2.8/zdoom-$zdoomVersion.zip"
 $zdoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/zdoom-Chris.ini"
-$gzDoomVersion = "4.2.1"
+$gzDoomVersion = "4.2.4"
 $gzDoomVersionHyphenSeparator = $gzDoomVersion.replace(".", "-")
-$gzDoomUrl = "https://github.com/coelckers/gzdoom/releases/download/g$gzDoomVersion/gzdoom-4-2-1-Windows-64bit.zip"
+$gzDoomUrl = "https://github.com/coelckers/gzdoom/releases/download/g$gzDoomVersion/gzdoom-$gzDoomVersionHyphenSeparator-Windows-64bit.zip"
 $gzDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/doom/config/gzdoom-Chris.ini"
 $prBoomVersion = "2.5.1.4"
 $prBoomUrl = "https://downloads.sourceforge.net/project/prboom-plus/prboom-plus/$prBoomVersion/prboom-plus-$prBoomVersion-win32.zip"
@@ -195,3 +195,4 @@ DownloadWad -Name "D2SPFX19.WAD" # Minor sprite fixes for DOOM 2
 DownloadMod -Name "SmoothDoom.pk3" # Smooth Doom for improved animations
 DownloadMod -Name "BDoom632.pk3" # Beautiful Doom for improved animations and others
 DownloadMod -Name "idclever-starter.pk3" # Pistol starts for GZDoom
+DownloadMod -Name "fullscrn_huds.pk3" # Better alternate HUD for GZDoom

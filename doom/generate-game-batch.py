@@ -168,6 +168,7 @@ class GzDoomSourcePort(SourcePort):
         elif configuration == 'beautiful':
             options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'BDoom632.pk3')
         options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'idclever-starter.pk3')
+        options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'fullscrn_huds.pk3')
         return options
 
     def get_post_game_config_commands(self):
