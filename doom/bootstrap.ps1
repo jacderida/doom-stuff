@@ -196,3 +196,4 @@ DownloadMod -Name "SmoothDoom.pk3" # Smooth Doom for improved animations
 DownloadMod -Name "BDoom632.pk3" # Beautiful Doom for improved animations and others
 DownloadMod -Name "idclever-starter.pk3" # Pistol starts for GZDoom
 DownloadMod -Name "fullscrn_huds.pk3" # Better alternate HUD for GZDoom
+DownloadMod -Name "perk_enhanced.pk3" # Slightly enhanced weapon animations
