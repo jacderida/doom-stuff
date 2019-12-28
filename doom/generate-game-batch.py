@@ -217,8 +217,9 @@ class Game(object):
                             print('Writing {0}'.format(path))
                             f.write('@echo off')
                             f.write(os.linesep)
-                            f.write('echo "Playing {0} E{1}M{2}: {3}"{4}'.format(
+                            f.write('echo "Playing {0} MAP{1}: E{2}M{3} - {4}"{5}'.format(
                                 self.name,
+                                str(mission.level).zfill(2),
                                 str(episode.number).zfill(2),
                                 str(mission.number).zfill(2),
                                 mission.name,
