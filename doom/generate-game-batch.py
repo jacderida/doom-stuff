@@ -62,6 +62,8 @@ class SourcePort(ABC):
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
         if mission.wad:
             options += '-file {0}\\{1} '.format(self.doom_config.wad_path, mission.wad)
+            if mission.wad == 'btsx_e1a.wad':
+                options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
         return options
 
     def get_misc_options(self, configuration):
