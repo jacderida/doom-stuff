@@ -20,13 +20,20 @@ class SourcePort(ABC):
         self.exe_path = '{0}\\{1}'.format(install_path, self.exe_name)
         self.version = version
         self.doom_config = doom_config
-        self.configurations = ["music", "nomusic", "nomonsters"]
+        self.configurations = ['music', 'nomusic', 'nomonsters']
 
     def get_configurations(self):
         return self.configurations
 
     def get_launch_commands(self, game, episode, mission, configuration):
         commands = []
+        if configuration == 'record':
+            commands.append(
+                'For /f "tokens=1-4 delims=/ " %%a in (\'date /t\') do (set mydate=%%c-%%b-%%a)')
+            commands.append(
+                'For /f "tokens=1-2 delims=/:" %%a in (\'time /t\') do (set mytime=%%a%%b)')
+            commands.append(
+                'set datetime=%mydate%-%mytime%')
         commands.append('set start=%cd%')
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
             self.doom_config.config_path,
@@ -42,19 +49,20 @@ class SourcePort(ABC):
         launch_command += self.get_misc_options(configuration)
         launch_command += self.get_skill_option()
         launch_command += self.get_warp_option(game, episode, mission)
+        if configuration == 'record':
+            launch_command += self.get_recording_options(game, episode, mission)
         launch_command += self.get_low_priority_wads(game)
         commands.append(launch_command.strip())
-        commands.append('cd %start%')
-        [commands.append(x) for x in self.get_post_game_config_commands()]
+        [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
         return commands
 
     def get_mod_options(self, configuration):
         return ''
 
-    def get_post_game_config_commands(self):
+    def get_post_game_config_commands(self, game, configuration):
         return [
             'del {0}'.format(self.config_name),
-            'cd %start'
+            'cd %start%'
         ]
 
     def get_game_options(self, game, mission):
@@ -161,7 +169,8 @@ class GzDoomSourcePort(SourcePort):
         SourcePort.__init__(
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
             'gzdoom.exe', install_path, version, doom_config)
-        self.configurations = ["music", "nomusic", "smooth", "beautiful", "nomonsters"]
+        self.configurations = [
+            'music', 'nomusic', 'smooth', 'beautiful', 'nomonsters', 'record']
 
     def get_mod_options(self, configuration):
         options = ''
@@ -174,8 +183,16 @@ class GzDoomSourcePort(SourcePort):
         options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'perk_enhanced.pk3')
         return options
 
-    def get_post_game_config_commands(self):
+    def get_recording_options(self, game, episode, mission):
+        return '-record MAP{0}-%datetime%.lmp '.format(str(mission.level).zfill(2))
+
+    def get_post_game_config_commands(self, game, configuration):
         commands = []
+        if configuration == 'record':
+            commands.append('move *.lmp "{0}\\{1}"'.format(
+                self.doom_config.demos_path,
+                game.get_directory_friendly_name()))
+        commands.append('cd %start%')
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
             self.install_path,
             self.config_name,
@@ -206,6 +223,16 @@ class Game(object):
     def add_episode(self, episode):
         self.episodes.append(episode)
 
+    def get_directory_friendly_name(self):
+        return '{0} -- {1}'.format(self.release_date, self.name.replace(':', ' --'))
+
+    def create_demo_directory(self):
+        game_demo_path = os.path.join(
+            self.doom_config.unix_demos_path,
+            self.get_directory_friendly_name())
+        if not os.path.exists(game_demo_path):
+            os.makedirs(game_demo_path)
+
     def write_batch_files(self):
         for episode in self.episodes:
             for mission in episode.missions:
@@ -232,7 +259,7 @@ class Game(object):
     def _get_batch_file_path(self, episode, mission, source_port, config):
         game_launcher_path = os.path.join(
             self.doom_config.unix_launchers_path,
-            '{0} -- {1}'.format(self.release_date, self.name.replace(':', ' --')),
+            self.get_directory_friendly_name(),
             source_port.name,
             config)
         if not os.path.exists(game_launcher_path):
@@ -333,12 +360,14 @@ class DoomConfig(object):
         self.unix_home_directory_path = unix_home_directory_path
         self.unix_source_ports_path = os.path.join(unix_home_directory_path, 'source-ports')
         self.unix_launchers_path = os.path.join(unix_home_directory_path, 'launchers')
+        self.unix_demos_path = os.path.join(unix_home_directory_path, 'demos')
         self.config_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'config')
         self.source_ports_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'source-ports')
         self.launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'launchers')
         self.iwad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'iwads')
         self.wad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'wads')
         self.mod_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'mods')
+        self.demos_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'demos')
 
 
 class SourcePortBuilder(object):
@@ -459,6 +488,7 @@ def main():
     games = menu.get_user_game_selection()
     for game in games:
         game.write_batch_files()
+        game.create_demo_directory()
 
 if __name__ == '__main__':
     sys.exit(main())

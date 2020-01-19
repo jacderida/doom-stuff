@@ -27,6 +27,7 @@ $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
 $configPath = Join-Path -Path $doomRootPath -ChildPath "config"
 $iwadPath = Join-Path -Path $doomRootPath -ChildPath "iwads"
 $wadPath = Join-Path -Path $doomRootPath -ChildPath "wads"
+$demoPath = Join-Path -Path $doomRootPath -ChildPath "demos"
 $modPath = Join-Path -Path $doomRootPath -ChildPath "mods"
 $pwd = Get-Location
 
@@ -48,6 +49,9 @@ function CreateHomeDirectories {
     }
     if (!(Test-Path $modPath)) {
         New-Item -ItemType Directory -Path $modPath
+    }
+    if (!(Test-Path $demoPath)) {
+        New-Item -ItemType Directory -Path $demoPath
     }
     $local:launchersPath = Join-Path -Path $doomRootPath -ChildPath "launchers"
     if (!(Test-Path $launchersPath)) {
