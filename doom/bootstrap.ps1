@@ -179,11 +179,11 @@ InstallSourcePort `
     -ConfigUrl $marshmallowDoomConfigUrl
 DownloadIwad -Name "DOOM.WAD"
 DownloadIwad -Name "DOOM2.WAD"
+DownloadIWad -Name "PLUTONIA.WAD"
+DownloadIWad -Name "TNT.WAD"
 DownloadMasterLevels
 DownloadWad -Name "SIGIL_v1_21.wad"
 DownloadWad -Name "SIGIL_COMPAT_v1_21.wad"
-DownloadWad -Name "PLUTONIA.WAD"
-DownloadWad -Name "TNT.WAD"
 DownloadWad -Name "HR.WAD"
 DownloadWad -Name "hr2final.wad"
 DownloadWad -Name "oku2v31.wad"

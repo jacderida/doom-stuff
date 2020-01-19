@@ -1,33 +1,33 @@
 game_name,iwad,pwad,complevel,release_date,episode_name,episode_number,mission_name,mission_number,level_number,is_secret
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Congo,1,1,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Well of Souls,2,2,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Aztec,3,3,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Caged,4,4,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Ghost Town,5,5,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Baron's Lair,6,6,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Caughtyard,7,7,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Realm,8,8,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Abbatoire,9,9,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Onslaught,10,10,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Hunted,11,11,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Speed,1,12,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Crypt,2,13,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Genesis,3,14,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Twilight,4,15,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Omen,5,16,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Compound,6,17,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Neurosphere,7,18,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,NME,8,19,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Death Domain,9,20,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Cyberden,10,20,true
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Slayer,1,21,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Impossible Mission,2,22,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Tombstone,3,23,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Final Frontier,4,24,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Temple of Darkness,5,25,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Bunker,6,26,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Anti Christ,7,27,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Sewers,8,28,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Odyssey of Noises,9,29,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Gateway of Hell,10,30,false
-The Plutonia Experiment,DOOM2.WAD,PLUTONIA.WAD,4,1996-06-17,Secret,4,Go 2 It,1,31,true
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Congo,1,1,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Well of Souls,2,2,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Aztec,3,3,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Caged,4,4,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Ghost Town,5,5,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Baron's Lair,6,6,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Caughtyard,7,7,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Realm,8,8,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Abbatoire,9,9,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Onslaught,10,10,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Earth,1,Hunted,11,11,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Speed,1,12,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Crypt,2,13,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Genesis,3,14,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Twilight,4,15,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Omen,5,16,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Compound,6,17,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Neurosphere,7,18,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,NME,8,19,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,The Death Domain,9,20,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Hell,2,Cyberden,10,20,true
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Slayer,1,21,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Impossible Mission,2,22,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Tombstone,3,23,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Final Frontier,4,24,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Temple of Darkness,5,25,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Bunker,6,26,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Anti Christ,7,27,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Sewers,8,28,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,Odyssey of Noises,9,29,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Devil Hive,3,The Gateway of Hell,10,30,false
+The Plutonia Experiment,PLUTONIA.WAD,PLUTONIA.WAD,4,1996-06-17,Secret,4,Go 2 It,1,31,true
