@@ -89,7 +89,7 @@ class SourcePort(ABC):
         options = ''
         if game.iwad == 'DOOM.WAD':
             options += '-file {0}\\D1SPFX19.WAD '.format(self.doom_config.wad_path)
-        elif game.iwad == 'DOOM2.WAD':
+        else:
             options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
         options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
         return options
