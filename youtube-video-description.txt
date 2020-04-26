@@ -1,0 +1,9 @@
+My setup:
+
+* GZDoom using low resolution 640x400 software rendering with linear scaling switched off
+* Crosshair (yes, even with autoaim) that changes colour based on health status
+* Slightly improved weapon animations: https://forum.zdoom.org/viewtopic.php?t=32628
+* Higher resolution weapon sounds: https://www.perkristian.net/game_doom-sfx.shtml
+* Improved HUD: https://github.com/3saster/fullscrn_huds/releases 
+* Minor sprite fixes: https://forum.zdoom.org/viewtopic.php?style=14&f=46&t=36713
+* Pistol starts for GZDoom: https://github.com/mmaulwurff/idclever-starter
