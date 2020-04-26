@@ -25,34 +25,19 @@ class SourcePort(ABC):
     def get_configurations(self):
         return self.configurations
 
-    def get_launch_commands(self, game, episode, mission, configuration):
+    def get_launch_batch_commands(self, game, configuration):
+        commands = []
+        [commands.append(x) for x in self._get_pre_launch_config_commands()]
+        commands.append(self._get_game_launch_command(game, None, None, configuration))
+        [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
+        return commands
+
+    def get_map_launch_batch_commands(self, game, episode, mission, configuration):
         commands = []
         if configuration == 'record':
-            commands.append(
-                'For /f "tokens=1-4 delims=/ " %%a in (\'date /t\') do (set mydate=%%c-%%b-%%a)')
-            commands.append(
-                'For /f "tokens=1-2 delims=/:" %%a in (\'time /t\') do (set mytime=%%a%%b)')
-            commands.append(
-                'set datetime=%mydate%-%mytime%')
-        commands.append('set start=%cd%')
-        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
-            self.doom_config.config_path,
-            self.config_name,
-            self.install_path,
-            self.config_name))
-        commands.append('cd {0}'.format(self.install_path))
-        launch_command = '{0} '.format(self.exe_name)
-        launch_command += self.get_game_options(game, mission)
-        mod_options = self.get_mod_options(configuration)
-        if mod_options:
-            launch_command += mod_options
-        launch_command += self.get_misc_options(configuration)
-        launch_command += self.get_skill_option()
-        launch_command += self.get_warp_option(game, episode, mission)
-        if configuration == 'record':
-            launch_command += self.get_recording_options(game, episode, mission)
-        launch_command += self.get_low_priority_wads(game)
-        commands.append(launch_command.strip())
+            [commands.append(x) for x in self._get_pre_launch_record_commands()]
+        [commands.append(x) for x in self._get_pre_launch_config_commands()]
+        commands.append(self._get_game_launch_command(game, episode, mission, configuration))
         [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
         return commands
 
@@ -66,12 +51,18 @@ class SourcePort(ABC):
         ]
 
     def get_game_options(self, game, mission):
+        """
+        There are a couple of hard coded cases here for rare exceptions. The first is for
+        Back to Saturn X, which for some reason has an additional WAD file. The second is
+        for the 'Master Levels' compilation, which distributes each map as a separate WAD file.
+        """
         options = '-config {0} '.format(self.config_name)
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        if mission.wad:
+        options += '-file {0}\\{1} '.format(self.doom_config.iwad_path, game.pwad)
+        if game.pwad == 'btsx_e1a.wad':
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
+        if game.name == 'Master Levels for Doom II':
             options += '-file {0}\\{1} '.format(self.doom_config.wad_path, mission.wad)
-            if mission.wad == 'btsx_e1a.wad':
-                options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
         return options
 
     def get_misc_options(self, configuration):
@@ -102,6 +93,46 @@ class SourcePort(ABC):
             options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
         options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
         return options
+
+    def _get_game_launch_command(self, game, episode, mission, configuration):
+        launch_command = '{0} '.format(self.exe_name)
+        launch_command += self.get_game_options(game, mission)
+        mod_options = self.get_mod_options(configuration)
+        if mod_options:
+            launch_command += mod_options
+        launch_command += self.get_misc_options(configuration)
+        if episode and mission:
+            launch_command += self._get_map_specific_options(game, episode, mission)
+        if configuration == 'record':
+            launch_command += self.get_recording_options(game, episode, mission)
+        launch_command += self.get_low_priority_wads(game)
+        return launch_command.strip()
+
+    def _get_pre_launch_record_commands(self):
+        commands = []
+        commands.append(
+            'For /f "tokens=1-4 delims=/ " %%a in (\'date /t\') do (set mydate=%%c-%%b-%%a)')
+        commands.append(
+            'For /f "tokens=1-2 delims=/:" %%a in (\'time /t\') do (set mytime=%%a%%b)')
+        commands.append(
+            'set datetime=%mydate%-%mytime%')
+        return commands
+
+    def _get_pre_launch_config_commands(self):
+        commands = []
+        commands.append('set start=%cd%')
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.doom_config.config_path,
+            self.config_name,
+            self.install_path,
+            self.config_name))
+        commands.append('cd {0}'.format(self.install_path))
+        return commands
+
+    def _get_map_specific_options(self, game, episode, mission):
+        map_options = self.get_skill_option()
+        map_options += self.get_warp_option(game, episode, mission)
+        return map_options
 
 
 class CrispyDoomSourcePort(SourcePort):
@@ -138,7 +169,10 @@ class DoomRetroSourcePort(SourcePort):
 class BoomSourcePort(SourcePort):
     def get_game_options(self, game, mission):
         options = '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        if mission.wad:
+        options += '-file {0}\\{1} '.format(self.doom_config.iwad_path, game.pwad)
+        if game.pwad == 'btsx_e1a.wad':
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
+        if game.name == 'Master Levels for Doom II':
             options += '-file {0}\\{1} '.format(self.doom_config.wad_path, mission.wad)
         options += '-complevel {0} '.format(game.complevel)
         return options
@@ -211,9 +245,10 @@ class ZDoomSourcePort(SourcePort):
 
 
 class Game(object):
-    def __init__(self, name, iwad, complevel, release_date, source_ports, doom_config):
+    def __init__(self, name, iwad, pwad, complevel, release_date, source_ports, doom_config):
         self.name = name
         self.iwad = iwad
+        self.pwad = pwad
         self.complevel = complevel
         self.release_date = release_date
         self.episodes = []
@@ -233,15 +268,26 @@ class Game(object):
         if not os.path.exists(game_demo_path):
             os.makedirs(game_demo_path)
 
-    def write_batch_files(self):
+    def write_launch_batch_files(self):
+        for source_port in self.source_ports:
+            for config in source_port.get_configurations():
+                if config == 'record':
+                    continue
+                commands = source_port.get_launch_batch_commands(self, config)
+                path = self._get_launch_batch_file_path(source_port, config)
+                with open(path, 'w') as f:
+                    print('Writing {0}'.format(path))
+                    for command in commands:
+                        f.write(command + os.linesep)
+
+    def write_map_launch_batch_files(self):
         for episode in self.episodes:
             for mission in episode.missions:
                 for source_port in self.source_ports:
                     for config in source_port.get_configurations():
-                        commands = source_port.get_launch_commands(
+                        commands = source_port.get_map_launch_batch_commands(
                             self, episode, mission, config)
-                        path = self._get_batch_file_path(
-                            episode, mission, source_port, config)
+                        path = self._get_map_batch_file_path(episode, mission, source_port, config)
                         with open(path, 'w') as f:
                             print('Writing {0}'.format(path))
                             f.write('@echo off')
@@ -256,7 +302,7 @@ class Game(object):
                             for command in commands:
                                 f.write(command + os.linesep)
 
-    def _get_batch_file_path(self, episode, mission, source_port, config):
+    def _get_map_batch_file_path(self, episode, mission, source_port, config):
         game_launcher_path = os.path.join(
             self.doom_config.unix_launchers_path,
             self.get_directory_friendly_name(),
@@ -275,6 +321,16 @@ class Game(object):
             str(mission.number).zfill(2),
             mission.get_name_for_path())
         return os.path.join(game_launcher_path, batch_file_name)
+
+    def _get_launch_batch_file_path(self, source_port, config):
+        game_launcher_path = os.path.join(
+            self.doom_config.unix_launchers_path,
+            self.get_directory_friendly_name(),
+            source_port.name,
+            config)
+        if not os.path.exists(game_launcher_path):
+            os.makedirs(game_launcher_path)
+        return os.path.join(game_launcher_path, 'start.bat')
 
 
 class Episode(object):
@@ -310,6 +366,7 @@ class GameParser(object):
         game = Game(
             game_data[0].game_name,
             game_data[0].iwad,
+            game_data[0].pwad,
             game_data[0].complevel,
             game_data[0].release_date,
             source_ports,
@@ -487,7 +544,8 @@ def main():
     menu.display_source_ports()
     games = menu.get_user_game_selection()
     for game in games:
-        game.write_batch_files()
+        game.write_launch_batch_files()
+        game.write_map_launch_batch_files()
         game.create_demo_directory()
 
 if __name__ == '__main__':
