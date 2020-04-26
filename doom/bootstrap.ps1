@@ -203,3 +203,4 @@ DownloadMod -Name "BDoom632.pk3" # Beautiful Doom for improved animations and ot
 DownloadMod -Name "idclever-starter.pk3" # Pistol starts for GZDoom
 DownloadMod -Name "fullscrn_huds.pk3" # Better alternate HUD for GZDoom
 DownloadMod -Name "perk_enhanced.pk3" # Slightly enhanced weapon animations
+DownloadMod -Name "decorate.txt" # Disables Lost Souls in enemy count in GZDoom
