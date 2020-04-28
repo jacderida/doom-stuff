@@ -58,7 +58,7 @@ class SourcePort(ABC):
         """
         options = '-config {0} '.format(self.config_name)
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        options += '-file {0}\\{1} '.format(self.doom_config.iwad_path, game.pwad)
+        options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
         if game.pwad == 'btsx_e1a.wad':
             options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
         if game.name == 'Master Levels for Doom II':
