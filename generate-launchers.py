@@ -92,6 +92,7 @@ class SourcePort(ABC):
         else:
             options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
         options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
+        options += '-file {0}\\DSPLASMA.wad '.format(self.doom_config.wad_path)
         return options
 
     def _get_game_launch_command(self, game, episode, mission, configuration):
