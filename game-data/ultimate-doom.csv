@@ -1,37 +1,37 @@
 game_name,iwad,pwad,complevel,release_date,episode_name,episode_number,mission_name,mission_number,level_number,is_secret
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Hanger,1,1,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Nuclear Plant,2,2,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Toxin Refinery,3,3,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Command Control,4,4,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Phobos Lab,5,5,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Central Processing,6,6,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Computer Station,7,7,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Phobos Anomaly,8,8,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Knee-Deep in the Dead,1,Military Base,9,9,true
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Deimos Anomaly,1,10,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Containment Area,2,11,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Refinery,3,12,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Deimos Lab,4,13,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Command Center,5,14,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Halls of the Damned,6,15,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Spawning Vats,7,16,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Tower of Babel,8,17,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,The Shores of Hell,2,Fortress of Mystery,9,18,true
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Hell Keep,1,19,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Slough of Despair,2,20,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Pandemonium,3,21,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,House of Pain,4,22,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Unholy Cathedral,5,23,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Mt. Erebus,6,24,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Limbo,7,25,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Dis,8,26,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Inferno,3,Warrens,9,27,true
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,Hell Beneath,1,28,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,Perfect Hatred,2,29,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,Sever the Wicked,3,30,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,Unruly Evil,4,31,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,They Will Repent,5,32,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,Against Thee Wickedly,6,33,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,And Hell Followed,7,34,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,Unto the Cruel,8,35,false
-The Ultimate DOOM,DOOM.WAD,,3,1995-04-30,Thy Flesh Consumed,4,Fear,9,36,true
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Hanger,1,1,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Nuclear Plant,2,2,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Toxin Refinery,3,3,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Command Control,4,4,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Phobos Lab,5,5,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Central Processing,6,6,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Computer Station,7,7,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Phobos Anomaly,8,8,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Knee-Deep in the Dead,1,Military Base,9,9,true
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Deimos Anomaly,1,10,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Containment Area,2,11,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Refinery,3,12,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Deimos Lab,4,13,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Command Center,5,14,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Halls of the Damned,6,15,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Spawning Vats,7,16,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Tower of Babel,8,17,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,The Shores of Hell,2,Fortress of Mystery,9,18,true
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Hell Keep,1,19,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Slough of Despair,2,20,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Pandemonium,3,21,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,House of Pain,4,22,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Unholy Cathedral,5,23,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Mt. Erebus,6,24,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Limbo,7,25,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Dis,8,26,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Inferno,3,Warrens,9,27,true
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,Hell Beneath,1,28,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,Perfect Hatred,2,29,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,Sever the Wicked,3,30,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,Unruly Evil,4,31,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,They Will Repent,5,32,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,Against Thee Wickedly,6,33,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,And Hell Followed,7,34,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,Unto the Cruel,8,35,false
+The Ultimate DOOM,DOOM.WAD,DOOM.WAD,3,1995-04-30,Thy Flesh Consumed,4,Fear,9,36,true
