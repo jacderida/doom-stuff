@@ -87,10 +87,12 @@ class SourcePort(ABC):
 
     def get_low_priority_wads(self, game):
         options = ''
-        if game.iwad == 'DOOM.WAD':
-            options += '-file {0}\\D1SPFX19.WAD '.format(self.doom_config.wad_path)
-        else:
-            options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
+        # Eviternity doesn't seem compatible with these sprite fixes
+        if game.pwad != 'Eviternity.wad':
+            if game.iwad == 'DOOM.WAD':
+                options += '-file {0}\\D1SPFX19.WAD '.format(self.doom_config.wad_path)
+            else:
+                options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
         options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
         options += '-file {0}\\DSPLASMA.wad '.format(self.doom_config.wad_path)
         return options
