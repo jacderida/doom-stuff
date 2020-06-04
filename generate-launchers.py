@@ -215,7 +215,6 @@ class GzDoomSourcePort(SourcePort):
             options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'BDoom632.pk3')
         options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'idclever-starter.pk3')
         options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'fullscrn_huds.pk3')
-        options += '-file {0}\\{1} '.format(self.doom_config.mod_path, 'perk_enhanced.pk3')
         return options
 
     def get_recording_options(self, game, episode, mission):
