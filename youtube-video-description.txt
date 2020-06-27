@@ -1,11 +1,10 @@
 My setup:
 
-* GZDoom using low resolution 640x400 software rendering with linear scaling switched off
-* Crosshair (yes, even with autoaim) that changes colour based on health status
-* Slightly improved weapon animations: https://forum.zdoom.org/viewtopic.php?t=32628
+* GZDoom with lowest possible resolution (though I record these videos in 1080p)
 * Higher resolution weapon sounds: https://www.perkristian.net/game_doom-sfx.shtml
 * Improved HUD: https://github.com/3saster/fullscrn_huds/releases 
 * Plasma Rifle sound from Sunlust: https://jacderida-software.s3-eu-west-1.amazonaws.com/DSPLASMA.WAD
 * Minor sprite fixes: https://forum.zdoom.org/viewtopic.php?style=14&f=46&t=36713
 * Pistol starts for GZDoom: https://github.com/mmaulwurff/idclever-starter
 * GZDoom config: https://github.com/jacderida/doom-stuff/blob/master/config/gzdoom-Chris.ini
+* GZDoom recording config: https://github.com/jacderida/doom-stuff/blob/master/config/gzdoom-Chris-record.ini
