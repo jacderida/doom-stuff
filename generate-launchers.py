@@ -87,14 +87,15 @@ class SourcePort(ABC):
 
     def get_low_priority_wads(self, game):
         options = ''
-        # Eviternity doesn't seem compatible with these sprite fixes
-        if game.pwad != 'Eviternity.wad':
+        # Some WADs aren't compatible with the sprite fix WAD
+        if game.pwad not in ['ANTA_REQ.WAD', 'Eviternity.wad']:
             if game.iwad == 'DOOM.WAD':
                 options += '-file {0}\\D1SPFX19.WAD '.format(self.doom_config.wad_path)
             else:
                 options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
-        options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
-        options += '-file {0}\\DSPLASMA.wad '.format(self.doom_config.wad_path)
+        if game.pwad != 'ANTA_REQ.WAD':
+            options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
+            options += '-file {0}\\DSPLASMA.wad '.format(self.doom_config.wad_path)
         return options
 
     def _get_game_launch_command(self, game, episode, mission, configuration):
