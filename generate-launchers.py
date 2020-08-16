@@ -45,10 +45,15 @@ class SourcePort(ABC):
         return ''
 
     def get_post_game_config_commands(self, game, configuration):
-        return [
-            'del {0}'.format(self.config_name),
-            'cd %start%'
-        ]
+        commands = []
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.install_path,
+            self.config_name,
+            self.doom_config.config_path,
+            self.config_name))
+        commands.append('del {0}'.format(self.config_name))
+        commands.append('cd %start%')
+        return commands
 
     def get_game_options(self, game, mission):
         """
@@ -87,6 +92,7 @@ class SourcePort(ABC):
 
     def get_low_priority_wads(self, game):
         options = ''
+        print(game.pwad)
         # Some WADs aren't compatible with the sprite fix WAD
         if game.pwad not in ['ANTA_REQ.WAD', 'Eviternity.wad']:
             if game.iwad == 'DOOM.WAD':
@@ -173,7 +179,7 @@ class DoomRetroSourcePort(SourcePort):
 class BoomSourcePort(SourcePort):
     def get_game_options(self, game, mission):
         options = '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        options += '-file {0}\\{1} '.format(self.doom_config.iwad_path, game.pwad)
+        options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
         if game.pwad == 'btsx_e1a.wad':
             options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
         if game.name == 'Master Levels for Doom II':
