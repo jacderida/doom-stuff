@@ -3,7 +3,7 @@ Import-Module AWSPowerShell.NetCore
 $zdoomVersion = "2.8.1"
 $zdoomUrl = "https://zdoom.org/files/zdoom/2.8/zdoom-$zdoomVersion.zip"
 $zdoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/zdoom-Chris.ini"
-$gzDoomVersion = "4.3.3"
+$gzDoomVersion = "4.4.2"
 $gzDoomVersionHyphenSeparator = $gzDoomVersion.replace(".", "-")
 $gzDoomUrl = "https://github.com/coelckers/gzdoom/releases/download/g$gzDoomVersion/gzdoom-$gzDoomVersionHyphenSeparator-Windows-64bit.zip"
 $gzDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/gzdoom-Chris.ini"
