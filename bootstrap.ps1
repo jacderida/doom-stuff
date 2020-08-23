@@ -13,15 +13,12 @@ $prBoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/maste
 $glBoomVersion = "2.5.1.4"
 $glBoomUrl = "https://downloads.sourceforge.net/project/prboom-plus/prboom-plus/$glBoomVersion/prboom-plus-$glBoomVersion-win32.zip"
 $glBoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/glboom-plus.cfg"
-$crispyDoomVersion = "5.6.3"
+$crispyDoomVersion = "5.9.0"
 $crispyDoomUrl = "https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-$crispyDoomVersion/crispy-doom-$crispyDoomVersion-win32.zip"
 $crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/crispy-doom.cfg"
 $doomRetroVersion = "3.0.5"
 $doomRetroUrl = "https://github.com/bradharding/doomretro/releases/download/v$doomRetroVersion/doomretro-$doomRetroVersion-win64.zip"
 $doomRetroConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/doomretro.cfg"
-$marshmallowDoomVersion = "0.77"
-$marshmallowDoomUrl = "http://www.marshmallowdoom.com/downloads/marshmallow-doom.zip"
-$marshmallowDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/doomretro.cfg"
 $doomRootPath = Join-Path -Path (Get-Item env:"USERPROFILE").Value -ChildPath "doom"
 $sourcePortsPath = Join-Path -Path $doomRootPath -ChildPath "source-ports"
 $configPath = Join-Path -Path $doomRootPath -ChildPath "config"
@@ -177,10 +174,6 @@ InstallSourcePort `
     -DirectoryName "glboom-$glBoomVersion" `
     -SourcePortUrl $glBoomUrl `
     -ConfigUrl $glBoomConfigUrl
-InstallSourcePort `
-    -DirectoryName "marshmallow_doom-$marshmallowDoomVersion" `
-    -SourcePortUrl $marshmallowDoomUrl `
-    -ConfigUrl $marshmallowDoomConfigUrl
 DownloadIwad -Name "DOOM.WAD"
 DownloadIwad -Name "DOOM2.WAD"
 DownloadIWad -Name "PLUTONIA.WAD"
