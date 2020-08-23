@@ -91,7 +91,7 @@ class SourcePort(ABC):
         options += self.get_low_priority_wads(game)
         return options
 
-    def get_misc_options(self, configuration):
+    def get_misc_options(self, configuration, game):
         options = '-fullscreen '
         if configuration == 'nomusic':
             options += '-nomusic '
@@ -130,7 +130,7 @@ class SourcePort(ABC):
         mod_options = self.get_mod_options(configuration)
         if mod_options:
             launch_command += mod_options
-        launch_command += self.get_misc_options(configuration)
+        launch_command += self.get_misc_options(configuration, game)
         if episode and mission:
             launch_command += self._get_map_specific_options(game, episode, mission)
         if configuration == 'record':
@@ -183,7 +183,7 @@ class DoomRetroSourcePort(SourcePort):
             'doomretro.exe', install_path, version, doom_config,
             MiscConfig(use_single_file_arg=True, use_config_arg=True))
 
-    def get_misc_options(self, configuration):
+    def get_misc_options(self, configuration, game):
         options = '-fullscreen '
         options += '-pistolstart '
         if configuration == 'nomusic':
@@ -195,18 +195,9 @@ class DoomRetroSourcePort(SourcePort):
 
 
 class BoomSourcePort(SourcePort):
-    def get_game_options(self, game, mission):
-        options = '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
-        if game.pwad == 'btsx_e1a.wad':
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
-        if game.name == 'Master Levels for Doom II':
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, mission.wad)
-        options += '-complevel {0} '.format(game.complevel)
-        return options
-
-    def get_misc_options(self, configuration):
-        options = '-nowindow -noaccel '
+    def get_misc_options(self, configuration, game):
+        options = '-complevel {0} '.format(game.complevel)
+        options += '-nowindow -noaccel '
         if configuration == 'nomusic':
             options += '-nomusic '
         return options
