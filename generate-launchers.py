@@ -11,7 +11,10 @@ from collections import namedtuple
 
 
 class SourcePort(ABC):
-    def __init__(self, name, friendly_name, config_name, exe_name, install_path, version, doom_config):
+    def __init__(
+            self, name, friendly_name,
+            config_name, exe_name, install_path,
+            version, doom_config, misc_config):
         self.friendly_name = friendly_name
         self.name = name
         self.config_name = config_name
@@ -21,13 +24,14 @@ class SourcePort(ABC):
         self.version = version
         self.doom_config = doom_config
         self.configurations = ['music', 'nomusic', 'nomonsters']
+        self.misc_config = misc_config
 
     def get_configurations(self):
         return self.configurations
 
     def get_launch_batch_commands(self, game, configuration):
         commands = []
-        [commands.append(x) for x in self._get_pre_launch_config_commands()]
+        [commands.append(x) for x in self.get_pre_launch_config_commands()]
         commands.append(self._get_game_launch_command(game, None, None, configuration))
         [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
         return commands
@@ -36,13 +40,24 @@ class SourcePort(ABC):
         commands = []
         if configuration == 'record':
             [commands.append(x) for x in self._get_pre_launch_record_commands()]
-        [commands.append(x) for x in self._get_pre_launch_config_commands()]
+        [commands.append(x) for x in self.get_pre_launch_config_commands()]
         commands.append(self._get_game_launch_command(game, episode, mission, configuration))
         [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
         return commands
 
     def get_mod_options(self, configuration):
         return ''
+
+    def get_pre_launch_config_commands(self):
+        commands = []
+        commands.append('set start=%cd%')
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.doom_config.config_path,
+            self.config_name,
+            self.install_path,
+            self.config_name))
+        commands.append('cd {0}'.format(self.install_path))
+        return commands
 
     def get_post_game_config_commands(self, game, configuration):
         commands = []
@@ -61,13 +76,19 @@ class SourcePort(ABC):
         Back to Saturn X, which for some reason has an additional WAD file. The second is
         for the 'Master Levels' compilation, which distributes each map as a separate WAD file.
         """
-        options = '-config {0} '.format(self.config_name)
+        options = ''
+        if self.misc_config.use_config_arg:
+            options = '-config {0} '.format(self.config_name)
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
+        if game.pwad in ['DOOM.WAD', 'DOOM2.WAD', 'PLUTONIA.WAD', 'TNT.WAD']:
+            options += '-file '
+        else:
+            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
         if game.pwad == 'btsx_e1a.wad':
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, 'btsx_e1b.wad')
+            options += self._get_wad_option('btsx_e1b.wad')
         if game.name == 'Master Levels for Doom II':
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, mission.wad)
+            options += self._get_wad_option(mission.wad)
+        options += self.get_low_priority_wads(game)
         return options
 
     def get_misc_options(self, configuration):
@@ -92,16 +113,15 @@ class SourcePort(ABC):
 
     def get_low_priority_wads(self, game):
         options = ''
-        print(game.pwad)
         # Some WADs aren't compatible with the sprite fix WAD
         if game.pwad not in ['ANTA_REQ.WAD', 'Eviternity.wad']:
             if game.iwad == 'DOOM.WAD':
-                options += '-file {0}\\D1SPFX19.WAD '.format(self.doom_config.wad_path)
+                options += self._get_wad_option('D1SPFX19.WAD')
             else:
-                options += '-file {0}\\D2SPFX19.WAD '.format(self.doom_config.wad_path)
+                options += self._get_wad_option('D2SPFX19.WAD')
         if game.pwad != 'ANTA_REQ.WAD':
-            options += '-file {0}\\pk_doom_sfx.wad '.format(self.doom_config.wad_path)
-            options += '-file {0}\\DSPLASMA.wad '.format(self.doom_config.wad_path)
+            options += self._get_wad_option('pk_doom_sfx.wad')
+            options += self._get_wad_option('DSPLASMA.wad')
         return options
 
     def _get_game_launch_command(self, game, episode, mission, configuration):
@@ -115,7 +135,6 @@ class SourcePort(ABC):
             launch_command += self._get_map_specific_options(game, episode, mission)
         if configuration == 'record':
             launch_command += self.get_recording_options(game, episode, mission)
-        launch_command += self.get_low_priority_wads(game)
         return launch_command.strip()
 
     def _get_pre_launch_record_commands(self):
@@ -128,42 +147,41 @@ class SourcePort(ABC):
             'set datetime=%mydate%-%mytime%')
         return commands
 
-    def _get_pre_launch_config_commands(self):
-        commands = []
-        commands.append('set start=%cd%')
-        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
-            self.doom_config.config_path,
-            self.config_name,
-            self.install_path,
-            self.config_name))
-        commands.append('cd {0}'.format(self.install_path))
-        return commands
-
     def _get_map_specific_options(self, game, episode, mission):
         map_options = self.get_skill_option()
         map_options += self.get_warp_option(game, episode, mission)
         return map_options
 
+    def _get_wad_option(self, wad_file):
+        if self.misc_config.use_single_file_arg:
+            return '{0}\\{1} '.format(self.doom_config.wad_path, wad_file)
+        return '-file {0}\\{1} '.format(self.doom_config.wad_path, wad_file)
 
 class CrispyDoomSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
             self, 'crispy', 'Crispy Doom', 'crispy-doom.cfg',
-            'crispy-doom.exe', install_path, version, doom_config)
+            'crispy-doom.exe', install_path, version, doom_config,
+            MiscConfig(use_single_file_arg=True, use_config_arg=False))
 
+    def get_pre_launch_config_commands(self):
+        commands = []
+        commands.append('set start=%cd%')
+        commands.append('cd {0}'.format(self.install_path))
+        return commands
 
-class MarshmallowDoomSourcePort(SourcePort):
-    def __init__(self, install_path, version, doom_config):
-        SourcePort.__init__(
-            self, 'marshmallow', 'Marshmallow Doom', 'marshmallow-doom.cfg',
-            'marshmallow-doom.exe', install_path, version, doom_config)
+    def get_post_game_config_commands(self, game, configuration):
+        commands = []
+        commands.append('cd %start%')
+        return commands
 
 
 class DoomRetroSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
             self, 'retro', 'Doom Retro', 'doomretro.cfg',
-            'doomretro.exe', install_path, version, doom_config)
+            'doomretro.exe', install_path, version, doom_config,
+            MiscConfig(use_single_file_arg=True, use_config_arg=True))
 
     def get_misc_options(self, configuration):
         options = '-fullscreen '
@@ -198,21 +216,24 @@ class PrBoomSourcePort(BoomSourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
             self, 'prboom', 'PRBoom-plus', 'prboom-plus.cfg',
-            'prboom-plus.exe', install_path, version, doom_config)
+            'prboom-plus.exe', install_path, version, doom_config,
+            MiscConfig(use_single_file_arg=True, use_config_arg=True))
 
 
 class GlBoomSourcePort(BoomSourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
             self, 'glboom', 'GLBoom-plus', 'glboom-plus.cfg',
-            'glboom-plus.exe', install_path, version, doom_config)
+            'glboom-plus.exe', install_path, version, doom_config,
+            MiscConfig(use_single_file_arg=True, use_config_arg=True))
 
 
 class GzDoomSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
             self, 'gzdoom', 'GZDoom', 'gzdoom-Chris.ini',
-            'gzdoom.exe', install_path, version, doom_config)
+            'gzdoom.exe', install_path, version, doom_config,
+            MiscConfig(use_single_file_arg=False, use_config_arg=True))
         self.configurations = [
             'music', 'nomusic', 'smooth', 'beautiful', 'nomonsters', 'record']
 
@@ -250,7 +271,8 @@ class ZDoomSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
             self, 'zdoom', 'ZDoom', 'zdoom-Chris.ini',
-            'zdoom.exe', install_path, version, doom_config)
+            'zdoom.exe', install_path, version, doom_config,
+            MiscConfig(use_single_file_arg=False, use_config_arg=True))
 
 
 class Game(object):
@@ -436,6 +458,12 @@ class DoomConfig(object):
         self.demos_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'demos')
 
 
+class MiscConfig(object):
+    def __init__(self, use_single_file_arg=True, use_config_arg=True):
+        self.use_single_file_arg = use_single_file_arg
+        self.use_config_arg = use_config_arg
+
+
 class SourcePortBuilder(object):
     def __init__(self, doom_config):
         self.doom_config = doom_config
@@ -469,9 +497,6 @@ class SourcePortBuilder(object):
             elif port_name == 'glboom':
                 source_ports.append(
                     GlBoomSourcePort(install_path, version, self.doom_config))
-            elif port_name == 'marshmallow_doom':
-                source_ports.append(
-                    MarshmallowDoomSourcePort(install_path, version, self.doom_config))
             else:
                 raise ValueError('{0} not supported. Please extend to support'.format(port_name))
         return source_ports
