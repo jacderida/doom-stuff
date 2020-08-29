@@ -217,6 +217,26 @@ class GlBoomSourcePort(BoomSourcePort):
             self, 'glboom', 'GLBoom-plus', 'glboom-plus.cfg',
             'glboom-plus.exe', install_path, version, doom_config,
             MiscConfig(use_single_file_arg=True, use_config_arg=True))
+        self.configurations = ['music', 'nomusic', 'nomonsters', 'record']
+
+    def get_recording_options(self, game, episode, mission):
+        return '-record MAP{0}-%datetime%.lmp '.format(str(mission.level).zfill(2))
+
+    def get_post_game_config_commands(self, game, configuration):
+        commands = []
+        if configuration == 'record':
+            commands.append('move *.lmp "{0}\\{1}"'.format(
+                self.doom_config.demos_path,
+                game.get_directory_friendly_name()))
+        commands.append('cd %start%')
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.install_path,
+            self.config_name,
+            self.doom_config.config_path,
+            self.config_name))
+        commands.append('del {0}'.format(self.config_name))
+        commands.append('cd %start')
+        return commands
 
 
 class GzDoomSourcePort(SourcePort):
