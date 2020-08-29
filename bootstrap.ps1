@@ -83,6 +83,63 @@ function InstallSourcePort {
     }
 }
 
+function InstallUtils {
+    $local:utilsPath = Join-Path -Path $doomRootPath -ChildPath "utils"
+    if (!(Test-Path $utilsPath)) {
+        New-Item -ItemType Directory -Path $utilsPath
+    }
+
+    $local:currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+    if (!($currentPath -like "*$utilsPath*")) {
+        echo "Adding $utilsPath to PATH"
+        $currentPath += ";$utilsPath"
+        [Environment]::SetEnvironmentVariable("PATH", $currentPath, "User")
+    }
+
+    $local:oggEncArchiveName = "oggenc2.88-1.3.7-x64.zip"
+    $local:oggEncUrl = "http://www.rarewares.org/files/ogg/$oggEncArchiveName"
+    $local:oggEncPath = Join-Path -Path $utilsPath -ChildPath "oggenc2.exe"
+    if (!(Test-Path $oggEncPath)) {
+        echo "Downloading oggenc2"
+        cd $utilsPath
+        curl.exe -L -O $oggEncUrl
+        7z e $oggEncArchiveName
+        rm $oggEncArchiveName
+        cd $pwd
+    }
+
+    $local:x264FileName = "x264-r3018-db0d417.exe"
+    $local:x264Url = "https://artifacts.videolan.org/x264/release-win64/x264-r3018-db0d417.exe"
+    $local:x264TempPath = Join-Path -Path $utilsPath -ChildPath $x264FileName
+    $local:x264Path = Join-Path -Path $utilsPath -ChildPath "x264.exe"
+    if (!(Test-Path $x264Path)) {
+        echo "Downloading x264"
+        cd $utilsPath
+        curl.exe -L -O $x264Url
+        Rename-Item -Path $x264TempPath -NewName "x264.exe"
+        cd $pwd
+    }
+
+    $local:mkvMergeVersion = "49.0.0"
+    $local:mkvMergeArchiveName = "mkvtoolnix-64-bit-$mkvMergeVersion.7z"
+    $local:mkvMergeUrl = "https://jacderida-software.s3-eu-west-1.amazonaws.com/$mkvMergeArchiveName"
+    $local:mkvMergePath = Join-Path -Path $utilsPath -ChildPath "mkvmerge.exe"
+    if (!(Test-Path $mkvMergePath)) {
+        echo "Downloading mkvmerge"
+        cd $utilsPath
+        curl.exe -L -O $mkvMergeUrl
+        7z x $mkvMergeArchiveName
+        $local:mkvMergeTempPath = Join-Path `
+            -Path $utilsPath `
+            -ChildPath "\mkvtoolnix\mkvmerge.exe"
+        echo "$mkvMergeTempPath"
+        Move-Item -Path $mkvMergeTempPath -Destination $mkvMergePath
+        rm $mkvMergeArchiveName
+        Remove-Item -Recurse -Force "mkvtoolnix"
+        cd $pwd
+    }
+}
+
 function DownloadWad {
     Param(
         [String]
@@ -174,6 +231,7 @@ InstallSourcePort `
     -DirectoryName "glboom-$glBoomVersion" `
     -SourcePortUrl $glBoomUrl `
     -ConfigUrl $glBoomConfigUrl
+InstallUtils
 DownloadIwad -Name "DOOM.WAD"
 DownloadIwad -Name "DOOM2.WAD"
 DownloadIWad -Name "PLUTONIA.WAD"
