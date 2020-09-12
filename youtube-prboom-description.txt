@@ -1,0 +1,7 @@
+My setup:
+
+* GLBoom 2.5.1.5
+* Higher resolution weapon sounds: https://www.perkristian.net/game_doom-sfx.shtml
+* Plasma Rifle sound from Sunlust: https://jacderida-software.s3-eu-west-1.amazonaws.com/DSPLASMA.WAD
+* Minor sprite fixes: https://forum.zdoom.org/viewtopic.php?style=14&f=46&t=36713
+* GLBoom config: https://raw.githubusercontent.com/jacderida/doom-stuff/master/config/glboom-plus.cfg
