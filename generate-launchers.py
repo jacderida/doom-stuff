@@ -574,7 +574,7 @@ class CliMenu(object):
 def get_doom_config():
     windows_doom_home_path = os.getenv('WINDOWS_DOOM_HOME')
     unix_doom_home_path = os.getenv('UNIX_DOOM_HOME')
-    windows_usernames = next(os.walk('/c/Users'))[1]
+    windows_usernames = next(os.walk('/mnt/c/Users'))[1]
     windows_username = next(
         username for username in windows_usernames if username not in ['Default', 'Public'])
     if not windows_doom_home_path:

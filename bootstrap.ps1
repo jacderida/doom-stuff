@@ -249,6 +249,8 @@ DownloadWad -Name "btsx_e1b.wad"
 DownloadWad -Name "sunlust.wad"
 DownloadWad -Name "bastionv0.9.pk3"
 DownloadWad -Name "ANTA_REQ.wad"
+DownloadWad -Name "JPCP.wad"
+DownloadWad -Name "JPCP_HUD.wad"
 DownloadWad -Name "pk_doom_sfx.wad" # Subtle high resolution sound effect improvements
 DownloadWad -Name "D1SPFX19.WAD" # Minor sprite fixes for DOOM 1
 DownloadWad -Name "D2SPFX19.WAD" # Minor sprite fixes for DOOM 2
