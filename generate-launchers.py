@@ -203,6 +203,42 @@ class BoomSourcePort(SourcePort):
         return options
 
 
+class DsdaSourcePort(BoomSourcePort):
+    def __init__(self, install_path, version, doom_config):
+        SourcePort.__init__(
+            self, 'dsda', 'dsda', 'dsda-doom.cfg',
+            'dsda-doom.exe', install_path, version, doom_config,
+            MiscConfig(use_single_file_arg=True, use_config_arg=True))
+        self.configurations = ['music', 'nomusic', 'nomonsters', 'record']
+
+    def get_misc_options(self, configuration, game):
+        options = '-complevel {0} '.format(game.complevel)
+        options += '-nowindow -noaccel '
+        if configuration == 'nomusic':
+            options += '-nomusic '
+        options += '-analysis -track_100k -time_keys -time_secrets '
+        return options
+
+    def get_recording_options(self, game, episode, mission):
+        return '-record MAP{0}-%datetime%.lmp '.format(str(mission.level).zfill(2))
+
+    def get_post_game_config_commands(self, game, configuration):
+        commands = []
+        if configuration == 'record':
+            commands.append('move *.lmp "{0}\\{1}"'.format(
+                self.doom_config.demos_path,
+                game.get_directory_friendly_name()))
+        commands.append('cd %start%')
+        commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+            self.install_path,
+            self.config_name,
+            self.doom_config.config_path,
+            self.config_name))
+        commands.append('del {0}'.format(self.config_name))
+        commands.append('cd %start')
+        return commands
+
+
 class PrBoomSourcePort(BoomSourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
@@ -508,6 +544,9 @@ class SourcePortBuilder(object):
             elif port_name == 'glboom':
                 source_ports.append(
                     GlBoomSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'dsda':
+                source_ports.append(
+                    DsdaSourcePort(install_path, version, self.doom_config))
             else:
                 raise ValueError('{0} not supported. Please extend to support'.format(port_name))
         return source_ports

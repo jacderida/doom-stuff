@@ -16,6 +16,9 @@ $glBoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/maste
 $crispyDoomVersion = "5.9.0"
 $crispyDoomUrl = "https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-$crispyDoomVersion/crispy-doom-$crispyDoomVersion-win32.zip"
 $crispyDoomConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/crispy-doom.cfg"
+$dsdaDoomVersion = "0.13.0"
+$dsdaDoomUrl = "https://jacderida-software.s3-eu-west-1.amazonaws.com/dsda-doom-$dsdaDoomVersion.zip"
+$dsdaConfigUrl = ""
 $doomRetroVersion = "3.0.5"
 $doomRetroUrl = "https://github.com/bradharding/doomretro/releases/download/v$doomRetroVersion/doomretro-$doomRetroVersion-win64.zip"
 $doomRetroConfigUrl = "https://raw.githubusercontent.com/jacderida/game-stuff/master/config/doomretro.cfg"
@@ -230,6 +233,10 @@ InstallSourcePort `
 InstallSourcePort `
     -DirectoryName "glboom-$glBoomVersion" `
     -SourcePortUrl $glBoomUrl `
+    -ConfigUrl $glBoomConfigUrl
+InstallSourcePort `
+    -DirectoryName "dsda-$dsdaDoomVersion" `
+    -SourcePortUrl $dsdaDoomUrl `
     -ConfigUrl $glBoomConfigUrl
 InstallUtils
 DownloadIwad -Name "DOOM.WAD"
