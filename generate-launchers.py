@@ -29,6 +29,12 @@ class SourcePort(ABC):
     def get_configurations(self):
         return self.configurations
 
+    def get_playdemo_batch_commands(self, game, demo_path):
+        commands = []
+        [commands.append(x) for x in self.get_pre_launch_config_commands()]
+        commands.append(self._get_playdemo_command(game, demo_path))
+        return commands
+
     def get_launch_batch_commands(self, game, configuration):
         commands = []
         [commands.append(x) for x in self.get_pre_launch_config_commands()]
@@ -144,6 +150,13 @@ class SourcePort(ABC):
             launch_command += self._get_map_specific_options(game, episode, mission)
         if configuration == 'record':
             launch_command += self.get_recording_options(game, episode, mission)
+        return launch_command.strip()
+
+    def _get_playdemo_command(self, game, demo_path):
+        launch_command = '{0} '.format(self.exe_name)
+        launch_command += self.get_game_options(game, None)
+        launch_command += self.get_misc_options('none', game)
+        launch_command += '-playdemo "{0}"'.format(demo_path)
         return launch_command.strip()
 
     def _get_pre_launch_record_commands(self, game, mission=None):
@@ -359,8 +372,7 @@ class Game(object):
 
     def create_demo_directories(self):
         game_demo_path = os.path.join(
-            self.doom_config.unix_demos_path,
-            self.get_directory_friendly_name())
+            self.doom_config.unix_demos_path, self.get_directory_friendly_name())
         if not os.path.exists(game_demo_path):
             os.makedirs(game_demo_path)
         external_path = os.path.join(game_demo_path, 'external')
@@ -373,7 +385,21 @@ class Game(object):
         if not os.path.exists(d2all_path):
             os.makedirs(d2all_path)
 
-    def write_launch_batch_files(self):
+    def generate_demo_launchers(self):
+        full_demo_paths = self._get_full_demo_paths()
+        demo_launchers_path = self._get_demo_launchers_path_for_game()
+        win_demos_path = self._get_win_demos_path_for_game()
+        dsda_source_port = next(x for x in self.source_ports if x.name == 'dsda')
+        for demo_path in full_demo_paths:
+            win_demo_path = self._get_win_demo_path(demo_path, win_demos_path)
+            commands = dsda_source_port.get_playdemo_batch_commands(self, win_demo_path)
+            path = self._get_demo_launcher_path(demo_launchers_path, demo_path)
+            with open(path, 'w') as f:
+                print('Writing {0}'.format(path))
+                for command in commands:
+                    f.write(command + os.linesep)
+
+    def generate_launch_batch_files(self):
         for source_port in self.source_ports:
             for config in source_port.get_configurations():
                 if config == 'record':
@@ -385,7 +411,7 @@ class Game(object):
                     for command in commands:
                         f.write(command + os.linesep)
 
-    def write_d2all_record_batch_file(self):
+    def generate_d2all_record_batch_file(self):
         for source_port in self.source_ports:
             if source_port.name == 'dsda':
                 commands = source_port.get_d2all_record_batch_commands(self, 'record')
@@ -395,7 +421,7 @@ class Game(object):
                     for command in commands:
                         f.write(command + os.linesep)
 
-    def write_map_launch_batch_files(self):
+    def generate_map_launch_batch_files(self):
         for episode in self.episodes:
             for mission in episode.missions:
                 for source_port in self.source_ports:
@@ -437,6 +463,30 @@ class Game(object):
             mission.get_name_for_path())
         return os.path.join(game_launcher_path, batch_file_name)
 
+    def _get_full_demo_paths(self):
+        full_demo_paths = []
+        game_demo_path = os.path.join(
+            self.doom_config.unix_demos_path, self.get_directory_friendly_name())
+        for root, dirs, files in os.walk(game_demo_path):
+            for file in [x for x in files if x.endswith('lmp')]:
+                full_demo_paths.append(os.path.join(root, file))
+        return full_demo_paths
+
+    def _get_win_demo_path(self, demo_path, win_demos_path):
+        demo_file_name = os.path.basename(demo_path)
+        demo_sub_dir_name = os.path.basename(os.path.dirname(demo_path))
+        return '{0}\\{1}\\{2}'.format(win_demos_path, demo_sub_dir_name, demo_file_name)
+
+    def _get_demo_launcher_path(self, demo_launchers_path, demo_path):
+        demo_file_name = os.path.basename(demo_path)
+        demo_sub_dir_name = os.path.basename(os.path.dirname(demo_path))
+        batch_file_name = '{0}.bat'.format(demo_file_name.split('.')[0])
+        path = os.path.join(demo_launchers_path, demo_sub_dir_name, batch_file_name)
+        dir_path = os.path.dirname(path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        return path
+
     def _get_game_launch_path(self, source_port, config):
         game_launcher_path = os.path.join(
             self.doom_config.unix_launchers_path,
@@ -446,6 +496,22 @@ class Game(object):
         if not os.path.exists(game_launcher_path):
             os.makedirs(game_launcher_path)
         return game_launcher_path
+
+    def _get_win_demos_path_for_game(self):
+        demo_launcher_path = os.path.join(
+            self.doom_config.unix_demo_launchers_path, self.get_directory_friendly_name())
+        if not os.path.exists(demo_launcher_path):
+            os.makedirs(demo_launcher_path)
+        win_demo_launcher_path = '{0}\\{1}'.format(
+            self.doom_config.demos_path, self.get_directory_friendly_name())
+        return win_demo_launcher_path
+
+    def _get_demo_launchers_path_for_game(self):
+        demo_launchers_path = os.path.join(
+            self.doom_config.unix_demo_launchers_path, self.get_directory_friendly_name())
+        if not os.path.exists(demo_launchers_path):
+            os.makedirs(demo_launchers_path)
+        return demo_launchers_path
 
 
 class Episode(object):
@@ -532,10 +598,12 @@ class DoomConfig(object):
         self.unix_home_directory_path = unix_home_directory_path
         self.unix_source_ports_path = os.path.join(unix_home_directory_path, 'source-ports')
         self.unix_launchers_path = os.path.join(unix_home_directory_path, 'launchers')
+        self.unix_demo_launchers_path = os.path.join(unix_home_directory_path, 'demo-launchers')
         self.unix_demos_path = os.path.join(unix_home_directory_path, 'demos')
         self.config_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'config')
         self.source_ports_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'source-ports')
         self.launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'launchers')
+        self.demo_launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'demo-launchers')
         self.iwad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'iwads')
         self.wad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'wads')
         self.mod_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'mods')
@@ -667,10 +735,11 @@ def main():
     menu.display_source_ports()
     games = menu.get_user_game_selection()
     for game in games:
-        game.write_launch_batch_files()
-        game.write_d2all_record_batch_file()
-        game.write_map_launch_batch_files()
+        game.generate_launch_batch_files()
+        game.generate_d2all_record_batch_file()
+        game.generate_map_launch_batch_files()
         game.create_demo_directories()
+        game.generate_demo_launchers()
 
 if __name__ == '__main__':
     sys.exit(main())

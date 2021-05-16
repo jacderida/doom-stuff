@@ -57,6 +57,10 @@ function CreateHomeDirectories {
     if (!(Test-Path $launchersPath)) {
         New-Item -ItemType Directory -Path $launchersPath
     }
+    $local:demoLaunchersPath = Join-Path -Path $doomRootPath -ChildPath "demo-launchers"
+    if (!(Test-Path $demoLaunchersPath)) {
+        New-Item -ItemType Directory -Path $demoLaunchersPath
+    }
 }
 
 function InstallSourcePort {
