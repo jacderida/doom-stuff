@@ -39,10 +39,10 @@ class SourcePort(ABC):
     def get_map_launch_batch_commands(self, game, episode, mission, configuration):
         commands = []
         if configuration == 'record':
-            [commands.append(x) for x in self._get_pre_launch_record_commands()]
+            [commands.append(x) for x in self._get_pre_launch_record_commands(game, mission)]
         [commands.append(x) for x in self.get_pre_launch_config_commands()]
         commands.append(self._get_game_launch_command(game, episode, mission, configuration))
-        [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
+        [commands.append(x) for x in self.get_post_game_config_commands(game, configuration, mission)]
         return commands
 
     def get_mod_options(self, configuration):
@@ -59,7 +59,7 @@ class SourcePort(ABC):
         commands.append('cd {0}'.format(self.install_path))
         return commands
 
-    def get_post_game_config_commands(self, game, configuration):
+    def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
             self.install_path,
@@ -120,7 +120,6 @@ class SourcePort(ABC):
             else:
                 options += self._get_wad_option('D2SPFX19.WAD')
         if game.pwad != 'ANTA_REQ.WAD':
-            options += self._get_wad_option('pk_doom_sfx.wad')
             options += self._get_wad_option('DSPLASMA.wad')
         return options
 
@@ -137,7 +136,7 @@ class SourcePort(ABC):
             launch_command += self.get_recording_options(game, episode, mission)
         return launch_command.strip()
 
-    def _get_pre_launch_record_commands(self):
+    def _get_pre_launch_record_commands(self, game, mission):
         commands = []
         commands.append(
             'For /f "tokens=1-4 delims=/ " %%a in (\'date /t\') do (set mydate=%%c-%%b-%%a)')
@@ -170,7 +169,7 @@ class CrispyDoomSourcePort(SourcePort):
         commands.append('cd {0}'.format(self.install_path))
         return commands
 
-    def get_post_game_config_commands(self, game, configuration):
+    def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         commands.append('cd %start%')
         return commands
@@ -211,6 +210,15 @@ class DsdaSourcePort(BoomSourcePort):
             MiscConfig(use_single_file_arg=True, use_config_arg=True))
         self.configurations = ['music', 'nomusic', 'nomonsters', 'record']
 
+    def _get_pre_launch_record_commands(self, game, mission):
+        commands = []
+        commands.append('move "{0}\\{1}\\MAP{2}\\*.lmp" "{3}"'.format(
+            self.doom_config.demos_path,
+            game.get_directory_friendly_name(),
+            str(mission.level).zfill(2),
+            self.install_path))
+        return commands
+
     def get_misc_options(self, configuration, game):
         options = '-complevel {0} '.format(game.complevel)
         options += '-nowindow -noaccel '
@@ -220,21 +228,23 @@ class DsdaSourcePort(BoomSourcePort):
         return options
 
     def get_recording_options(self, game, episode, mission):
-        return '-record MAP{0}-%datetime%.lmp '.format(str(mission.level).zfill(2))
+        return '-record MAP{0} -longtics'.format(str(mission.level).zfill(2))
 
-    def get_post_game_config_commands(self, game, configuration):
+    def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         if configuration == 'record':
-            commands.append('move *.lmp "{0}\\{1}"'.format(
+            demo_path = '{0}\\{1}\\MAP{2}'.format(
                 self.doom_config.demos_path,
-                game.get_directory_friendly_name()))
+                game.get_directory_friendly_name(),
+                str(mission.level).zfill(2))
+            commands.append('if not exist "{0}\\" mkdir "{1}"'.format(demo_path, demo_path))
+            commands.append('move *.lmp "{0}"'.format(demo_path))
         commands.append('cd %start%')
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
             self.install_path,
             self.config_name,
             self.doom_config.config_path,
             self.config_name))
-        commands.append('del {0}'.format(self.config_name))
         commands.append('cd %start')
         return commands
 
@@ -258,7 +268,7 @@ class GlBoomSourcePort(BoomSourcePort):
     def get_recording_options(self, game, episode, mission):
         return '-record MAP{0}-%datetime%.lmp '.format(str(mission.level).zfill(2))
 
-    def get_post_game_config_commands(self, game, configuration):
+    def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         if configuration == 'record':
             commands.append('move *.lmp "{0}\\{1}"'.format(
@@ -297,7 +307,7 @@ class GzDoomSourcePort(SourcePort):
     def get_recording_options(self, game, episode, mission):
         return '-record MAP{0}-%datetime%.lmp '.format(str(mission.level).zfill(2))
 
-    def get_post_game_config_commands(self, game, configuration):
+    def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         if configuration == 'record':
             commands.append('move *.lmp "{0}\\{1}"'.format(
@@ -547,6 +557,8 @@ class SourcePortBuilder(object):
             elif port_name == 'dsda':
                 source_ports.append(
                     DsdaSourcePort(install_path, version, self.doom_config))
+            elif port_name == 'zandronum':
+                pass
             else:
                 raise ValueError('{0} not supported. Please extend to support'.format(port_name))
         return source_ports
