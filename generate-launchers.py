@@ -36,13 +36,23 @@ class SourcePort(ABC):
         [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
         return commands
 
+    def get_d2all_record_batch_commands(self, game, configuration):
+        commands = []
+        [commands.append(x) for x in self._get_pre_launch_record_commands(game, 'D2All')]
+        [commands.append(x) for x in self.get_pre_launch_config_commands()]
+        mission = Mission('D2All', 1, 'D2All', game.pwad)
+        commands.append(self._get_game_launch_command(game, None, mission, configuration))
+        [commands.append(x) for x in self.get_post_game_config_commands(game, configuration, 'D2All')]
+        return commands
+
     def get_map_launch_batch_commands(self, game, episode, mission, configuration):
         commands = []
+        map_padded = 'MAP{0}'.format(str(mission.level).zfill(2))
         if configuration == 'record':
-            [commands.append(x) for x in self._get_pre_launch_record_commands(game, mission)]
+            [commands.append(x) for x in self._get_pre_launch_record_commands(game, map_padded)]
         [commands.append(x) for x in self.get_pre_launch_config_commands()]
         commands.append(self._get_game_launch_command(game, episode, mission, configuration))
-        [commands.append(x) for x in self.get_post_game_config_commands(game, configuration, mission)]
+        [commands.append(x) for x in self.get_post_game_config_commands(game, configuration, map_padded)]
         return commands
 
     def get_mod_options(self, configuration):
@@ -136,7 +146,7 @@ class SourcePort(ABC):
             launch_command += self.get_recording_options(game, episode, mission)
         return launch_command.strip()
 
-    def _get_pre_launch_record_commands(self, game, mission):
+    def _get_pre_launch_record_commands(self, game, mission=None):
         commands = []
         commands.append(
             'For /f "tokens=1-4 delims=/ " %%a in (\'date /t\') do (set mydate=%%c-%%b-%%a)')
@@ -212,10 +222,10 @@ class DsdaSourcePort(BoomSourcePort):
 
     def _get_pre_launch_record_commands(self, game, mission):
         commands = []
-        commands.append('move "{0}\\{1}\\MAP{2}\\*.lmp" "{3}"'.format(
+        commands.append('move "{0}\\{1}\\{2}\\*.lmp" "{3}"'.format(
             self.doom_config.demos_path,
             game.get_directory_friendly_name(),
-            str(mission.level).zfill(2),
+            mission,
             self.install_path))
         return commands
 
@@ -228,15 +238,15 @@ class DsdaSourcePort(BoomSourcePort):
         return options
 
     def get_recording_options(self, game, episode, mission):
+        if mission.level == 'D2All':
+            return '-skill 4 -record D2All -longtics'
         return '-record MAP{0} -longtics'.format(str(mission.level).zfill(2))
 
     def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         if configuration == 'record':
-            demo_path = '{0}\\{1}\\MAP{2}'.format(
-                self.doom_config.demos_path,
-                game.get_directory_friendly_name(),
-                str(mission.level).zfill(2))
+            demo_path = '{0}\\{1}\\{2}'.format(
+                self.doom_config.demos_path, game.get_directory_friendly_name(), mission)
             commands.append('if not exist "{0}\\" mkdir "{1}"'.format(demo_path, demo_path))
             commands.append('move *.lmp "{0}"'.format(demo_path))
         commands.append('cd %start%')
@@ -272,8 +282,7 @@ class GlBoomSourcePort(BoomSourcePort):
         commands = []
         if configuration == 'record':
             commands.append('move *.lmp "{0}\\{1}"'.format(
-                self.doom_config.demos_path,
-                game.get_directory_friendly_name()))
+                self.doom_config.demos_path, game.get_directory_friendly_name()))
         commands.append('cd %start%')
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
             self.install_path,
@@ -311,8 +320,7 @@ class GzDoomSourcePort(SourcePort):
         commands = []
         if configuration == 'record':
             commands.append('move *.lmp "{0}\\{1}"'.format(
-                self.doom_config.demos_path,
-                game.get_directory_friendly_name()))
+                self.doom_config.demos_path, game.get_directory_friendly_name()))
         commands.append('cd %start%')
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
             self.install_path,
@@ -349,12 +357,21 @@ class Game(object):
     def get_directory_friendly_name(self):
         return '{0} -- {1}'.format(self.release_date, self.name.replace(':', ' --'))
 
-    def create_demo_directory(self):
+    def create_demo_directories(self):
         game_demo_path = os.path.join(
             self.doom_config.unix_demos_path,
             self.get_directory_friendly_name())
         if not os.path.exists(game_demo_path):
             os.makedirs(game_demo_path)
+        external_path = os.path.join(game_demo_path, 'external')
+        if not os.path.exists(external_path):
+            os.makedirs(external_path)
+        highlights_path = os.path.join(game_demo_path, 'highlights')
+        if not os.path.exists(highlights_path):
+            os.makedirs(highlights_path)
+        d2all_path = os.path.join(game_demo_path, 'D2All')
+        if not os.path.exists(d2all_path):
+            os.makedirs(d2all_path)
 
     def write_launch_batch_files(self):
         for source_port in self.source_ports:
@@ -362,7 +379,17 @@ class Game(object):
                 if config == 'record':
                     continue
                 commands = source_port.get_launch_batch_commands(self, config)
-                path = self._get_launch_batch_file_path(source_port, config)
+                path = os.path.join(self._get_game_launch_path(source_port, config), 'start.bat')
+                with open(path, 'w') as f:
+                    print('Writing {0}'.format(path))
+                    for command in commands:
+                        f.write(command + os.linesep)
+
+    def write_d2all_record_batch_file(self):
+        for source_port in self.source_ports:
+            if source_port.name == 'dsda':
+                commands = source_port.get_d2all_record_batch_commands(self, 'record')
+                path = os.path.join(self._get_game_launch_path(source_port, 'record'), 'd2all.bat')
                 with open(path, 'w') as f:
                     print('Writing {0}'.format(path))
                     for command in commands:
@@ -410,7 +437,7 @@ class Game(object):
             mission.get_name_for_path())
         return os.path.join(game_launcher_path, batch_file_name)
 
-    def _get_launch_batch_file_path(self, source_port, config):
+    def _get_game_launch_path(self, source_port, config):
         game_launcher_path = os.path.join(
             self.doom_config.unix_launchers_path,
             self.get_directory_friendly_name(),
@@ -418,7 +445,7 @@ class Game(object):
             config)
         if not os.path.exists(game_launcher_path):
             os.makedirs(game_launcher_path)
-        return os.path.join(game_launcher_path, 'start.bat')
+        return game_launcher_path
 
 
 class Episode(object):
@@ -641,8 +668,9 @@ def main():
     games = menu.get_user_game_selection()
     for game in games:
         game.write_launch_batch_files()
+        game.write_d2all_record_batch_file()
         game.write_map_launch_batch_files()
-        game.create_demo_directory()
+        game.create_demo_directories()
 
 if __name__ == '__main__':
     sys.exit(main())
