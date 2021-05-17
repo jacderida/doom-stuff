@@ -247,6 +247,8 @@ class DsdaSourcePort(BoomSourcePort):
         options += '-nowindow -noaccel '
         if configuration == 'nomusic':
             options += '-nomusic '
+        elif configuration == 'nomonsters':
+            options += '-nomonsters '
         options += '-analysis -track_100k -time_keys -time_secrets '
         return options
 
