@@ -96,15 +96,14 @@ class SourcePort(ABC):
         if self.misc_config.use_config_arg:
             options = '-config {0} '.format(self.config_name)
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
-        if game.pwad in ['DOOM.WAD', 'DOOM2.WAD', 'PLUTONIA.WAD', 'TNT.WAD']:
-            options += '-file '
-        else:
-            options += '-file {0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
-        if game.pwad == 'btsx_e1a.wad':
-            options += self._get_wad_option('btsx_e1b.wad')
+        options += '-file '
+        options += self.get_low_priority_wads(game)
+        if game.pwad:
+            options += '{0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
+            if game.pwad == 'btsx_e1a.wad':
+                options += self._get_wad_option('btsx_e1b.wad')
         if game.name == 'Master Levels for Doom II':
             options += self._get_wad_option(mission.wad)
-        options += self.get_low_priority_wads(game)
         return options
 
     def get_misc_options(self, configuration, game):

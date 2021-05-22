@@ -1,28 +1,28 @@
 game_name,iwad,pwad,complevel,release_date,episode_name,episode_number,mission_name,mission_number,level_number,is_secret
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Hanger,1,1,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Nuclear Plant,2,2,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Toxin Refinery,3,3,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Command Control,4,4,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Phobos Lab,5,5,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Central Processing,6,6,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Computer Station,7,7,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Phobos Anomaly,8,8,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Knee-Deep in the Dead,1,Military Base,9,9,true
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Deimos Anomaly,1,10,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Containment Area,2,11,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Refinery,3,12,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Deimos Lab,4,13,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Command Center,5,14,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Halls of the Damned,6,15,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Spawning Vats,7,16,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Tower of Babel,8,17,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,The Shores of Hell,2,Fortress of Mystery,9,18,true
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Hell Keep,1,19,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Slough of Despair,2,20,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Pandemonium,3,21,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,House of Pain,4,22,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Unholy Cathedral,5,23,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Mt. Erebus,6,24,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Limbo,7,25,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Dis,8,26,false
-DOOM,DOOM.WAD,DOOM.WAD,3,1993-12-10,Inferno,3,Warrens,9,27,true
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Hanger,1,1,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Nuclear Plant,2,2,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Toxin Refinery,3,3,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Command Control,4,4,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Phobos Lab,5,5,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Central Processing,6,6,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Computer Station,7,7,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Phobos Anomaly,8,8,false
+DOOM,DOOM.WAD,,3,1993-12-10,Knee-Deep in the Dead,1,Military Base,9,9,true
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Deimos Anomaly,1,10,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Containment Area,2,11,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Refinery,3,12,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Deimos Lab,4,13,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Command Center,5,14,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Halls of the Damned,6,15,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Spawning Vats,7,16,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Tower of Babel,8,17,false
+DOOM,DOOM.WAD,,3,1993-12-10,The Shores of Hell,2,Fortress of Mystery,9,18,true
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Hell Keep,1,19,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Slough of Despair,2,20,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Pandemonium,3,21,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,House of Pain,4,22,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Unholy Cathedral,5,23,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Mt. Erebus,6,24,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Limbo,7,25,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Dis,8,26,false
+DOOM,DOOM.WAD,,3,1993-12-10,Inferno,3,Warrens,9,27,true
