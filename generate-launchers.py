@@ -242,7 +242,13 @@ class DsdaSourcePort(BoomSourcePort):
         return commands
 
     def get_misc_options(self, configuration, game):
-        options = '-complevel {0} '.format(game.complevel)
+        options = ''
+        if configuration == 'record' and game.complevel not in [9, 11]:
+            # When recording, apply complevel for all values except 9 or 11.
+            # For some reason, those values force the use of `-shorttics` when recording demos.
+            options = '-complevel {0} '.format(game.complevel)
+        elif configuration != 'record':
+            options = '-complevel {0} '.format(game.complevel)
         options += '-nowindow -noaccel '
         if configuration == 'nomusic':
             options += '-nomusic '
@@ -259,7 +265,7 @@ class DsdaSourcePort(BoomSourcePort):
     def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         if configuration == 'record':
-            demo_path = '{0}\\{1}\\{2}'.format(
+            demo_path = '{0}\\{1}\\{2}'.format( 
                 self.doom_config.demos_path, game.get_directory_friendly_name(), mission)
             commands.append('if not exist "{0}\\" mkdir "{1}"'.format(demo_path, demo_path))
             commands.append('move *.lmp "{0}"'.format(demo_path))
@@ -549,7 +555,7 @@ class GameParser(object):
             game_data[0].game_name,
             game_data[0].iwad,
             game_data[0].pwad,
-            game_data[0].complevel,
+            int(game_data[0].complevel),
             game_data[0].release_date,
             source_ports,
             self.doom_config)
