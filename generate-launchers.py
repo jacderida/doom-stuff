@@ -31,13 +31,13 @@ class SourcePort(ABC):
 
     def get_playdemo_batch_commands(self, game, demo_path):
         commands = []
-        [commands.append(x) for x in self.get_pre_launch_config_commands()]
+        [commands.append(x) for x in self.get_pre_launch_config_commands(None)]
         commands.append(self._get_playdemo_command(game, demo_path))
         return commands
 
     def get_launch_batch_commands(self, game, configuration):
         commands = []
-        [commands.append(x) for x in self.get_pre_launch_config_commands()]
+        [commands.append(x) for x in self.get_pre_launch_config_commands(configuration)]
         commands.append(self._get_game_launch_command(game, None, None, configuration))
         [commands.append(x) for x in self.get_post_game_config_commands(game, configuration)]
         return commands
@@ -45,7 +45,7 @@ class SourcePort(ABC):
     def get_d2all_record_batch_commands(self, game, configuration):
         commands = []
         [commands.append(x) for x in self._get_pre_launch_record_commands(game, 'D2All')]
-        [commands.append(x) for x in self.get_pre_launch_config_commands()]
+        [commands.append(x) for x in self.get_pre_launch_config_commands(configuration)]
         mission = Mission('D2All', 1, 'D2All', game.pwad)
         commands.append(self._get_game_launch_command(game, None, mission, configuration))
         [commands.append(x) for x in self.get_post_game_config_commands(game, configuration, 'D2All')]
@@ -56,7 +56,7 @@ class SourcePort(ABC):
         map_padded = 'MAP{0}'.format(str(mission.level).zfill(2))
         if configuration == 'record':
             [commands.append(x) for x in self._get_pre_launch_record_commands(game, map_padded)]
-        [commands.append(x) for x in self.get_pre_launch_config_commands()]
+        [commands.append(x) for x in self.get_pre_launch_config_commands(configuration)]
         commands.append(self._get_game_launch_command(game, episode, mission, configuration))
         [commands.append(x) for x in self.get_post_game_config_commands(game, configuration, map_padded)]
         return commands
@@ -64,7 +64,7 @@ class SourcePort(ABC):
     def get_mod_options(self, configuration):
         return ''
 
-    def get_pre_launch_config_commands(self):
+    def get_pre_launch_config_commands(self, configuration):
         commands = []
         commands.append('set start=%cd%')
         commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
@@ -73,6 +73,8 @@ class SourcePort(ABC):
             self.install_path,
             self.config_name))
         commands.append('cd {0}'.format(self.install_path))
+        if configuration in ['music', 'nomusic']:
+            commands.append('AutoHotkeyU64.exe {0}\\mb3quickload.ahk'.format(self.doom_config.utils_path))
         return commands
 
     def get_post_game_config_commands(self, game, configuration, mission=None):
@@ -84,6 +86,8 @@ class SourcePort(ABC):
             self.config_name))
         commands.append('del {0}'.format(self.config_name))
         commands.append('cd %start%')
+        if configuration in ['music', 'nomusic', 'nomonsters']:
+            commands.append('taskkill /f /im AutoHotkeyU64.exe')
         return commands
 
     def get_game_options(self, game, mission, configuration):
@@ -200,7 +204,7 @@ class CrispyDoomSourcePort(SourcePort):
             'crispy-doom.exe', install_path, version, doom_config,
             MiscConfig(use_single_file_arg=True, use_config_arg=False, save_arg_name='savedir'))
 
-    def get_pre_launch_config_commands(self):
+    def get_pre_launch_config_commands(self, configuration):
         commands = []
         commands.append('set start=%cd%')
         commands.append('cd {0}'.format(self.install_path))
@@ -291,6 +295,8 @@ class DsdaSourcePort(BoomSourcePort):
             self.doom_config.config_path,
             self.config_name))
         commands.append('cd %start')
+        if configuration in ['music', 'nomusic']:
+            commands.append('taskkill /f /im AutoHotkeyU64.exe')
         return commands
 
 
@@ -412,12 +418,14 @@ class Game(object):
             self.doom_config.unix_saves_path, self.get_directory_friendly_name())
         missions = []
         [missions.append(m) for e in self.episodes for m in e.missions]
-        missions.append('D2All')
-        for mission in missions:
-            for sp in self.source_ports:
-                path = os.path.join(saves_path, sp.name, "MAP{}".format(str(mission.level).zfill(2)))
+        for sp in self.source_ports:
+            for mission in missions:
+                path = os.path.join(saves_path, sp.name, 'MAP{}'.format(str(mission.level).zfill(2)))
                 if not os.path.exists(path):
                     os.makedirs(path)
+            d2all_path = os.path.join(saves_path, sp.name, 'D2All')
+            if not os.path.exists(d2all_path):
+                os.makedirs(d2all_path)
 
     def generate_demo_launchers(self):
         full_demo_paths = self._get_full_demo_paths()
@@ -644,6 +652,7 @@ class DoomConfig(object):
         self.mod_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'mods')
         self.demos_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'demos')
         self.saves_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'saves')
+        self.utils_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'utils')
 
 
 class MiscConfig(object):
