@@ -86,7 +86,7 @@ class SourcePort(ABC):
         commands.append('cd %start%')
         return commands
 
-    def get_game_options(self, game, mission):
+    def get_game_options(self, game, mission, configuration):
         """
         There are a couple of hard coded cases here for rare exceptions. The first is for
         Back to Saturn X, which for some reason has an additional WAD file. The second is
@@ -94,7 +94,10 @@ class SourcePort(ABC):
         """
         options = ''
         if self.misc_config.use_config_arg:
-            options = '-config {0} '.format(self.config_name)
+            options += '-config {0} '.format(self.config_name)
+        if configuration in ['music', 'nomusic']:
+            save_path = self._get_save_path(game, mission)
+            options += '-{0} {1} '.format(self.misc_config.save_arg_name, save_path)
         options += '-iwad {0}\\{1} '.format(self.doom_config.iwad_path, game.iwad)
         options += '-file '
         options += self.get_low_priority_wads(game)
@@ -140,7 +143,7 @@ class SourcePort(ABC):
 
     def _get_game_launch_command(self, game, episode, mission, configuration):
         launch_command = '{0} '.format(self.exe_name)
-        launch_command += self.get_game_options(game, mission)
+        launch_command += self.get_game_options(game, mission, configuration)
         mod_options = self.get_mod_options(configuration)
         if mod_options:
             launch_command += mod_options
@@ -153,7 +156,7 @@ class SourcePort(ABC):
 
     def _get_playdemo_command(self, game, demo_path):
         launch_command = '{0} '.format(self.exe_name)
-        launch_command += self.get_game_options(game, None)
+        launch_command += self.get_game_options(game, None, None)
         launch_command += self.get_misc_options('none', game)
         launch_command += '-playdemo "{0}"'.format(demo_path)
         return launch_command.strip()
@@ -178,12 +181,24 @@ class SourcePort(ABC):
             return '{0}\\{1} '.format(self.doom_config.wad_path, wad_file)
         return '-file {0}\\{1} '.format(self.doom_config.wad_path, wad_file)
 
+    def _get_save_path(self, game, mission):
+        if mission:
+            return '"{0}\\{1}\\{2}\\MAP{3}"'.format(
+                self.doom_config.saves_path,
+                game.get_directory_friendly_name(),
+                self.name,
+                str(mission.level).zfill(2))
+        return '"{0}\\{1}\\{2}\\D2All"'.format(
+            self.doom_config.saves_path,
+            game.get_directory_friendly_name(),
+            self.name)
+
 class CrispyDoomSourcePort(SourcePort):
     def __init__(self, install_path, version, doom_config):
         SourcePort.__init__(
             self, 'crispy', 'Crispy Doom', 'crispy-doom.cfg',
             'crispy-doom.exe', install_path, version, doom_config,
-            MiscConfig(use_single_file_arg=True, use_config_arg=False))
+            MiscConfig(use_single_file_arg=True, use_config_arg=False, save_arg_name='savedir'))
 
     def get_pre_launch_config_commands(self):
         commands = []
@@ -265,7 +280,7 @@ class DsdaSourcePort(BoomSourcePort):
     def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
         if configuration == 'record':
-            demo_path = '{0}\\{1}\\{2}'.format( 
+            demo_path = '{0}\\{1}\\{2}'.format(
                 self.doom_config.demos_path, game.get_directory_friendly_name(), mission)
             commands.append('if not exist "{0}\\" mkdir "{1}"'.format(demo_path, demo_path))
             commands.append('move *.lmp "{0}"'.format(demo_path))
@@ -391,6 +406,18 @@ class Game(object):
         d2all_path = os.path.join(game_demo_path, 'D2All')
         if not os.path.exists(d2all_path):
             os.makedirs(d2all_path)
+
+    def create_save_directories(self):
+        saves_path = os.path.join(
+            self.doom_config.unix_saves_path, self.get_directory_friendly_name())
+        missions = []
+        [missions.append(m) for e in self.episodes for m in e.missions]
+        missions.append('D2All')
+        for mission in missions:
+            for sp in self.source_ports:
+                path = os.path.join(saves_path, sp.name, "MAP{}".format(str(mission.level).zfill(2)))
+                if not os.path.exists(path):
+                    os.makedirs(path)
 
     def generate_demo_launchers(self):
         full_demo_paths = self._get_full_demo_paths()
@@ -607,6 +634,7 @@ class DoomConfig(object):
         self.unix_launchers_path = os.path.join(unix_home_directory_path, 'launchers')
         self.unix_demo_launchers_path = os.path.join(unix_home_directory_path, 'demo-launchers')
         self.unix_demos_path = os.path.join(unix_home_directory_path, 'demos')
+        self.unix_saves_path = os.path.join(unix_home_directory_path, 'saves')
         self.config_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'config')
         self.source_ports_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'source-ports')
         self.launchers_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'launchers')
@@ -615,12 +643,14 @@ class DoomConfig(object):
         self.wad_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'wads')
         self.mod_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'mods')
         self.demos_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'demos')
+        self.saves_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'saves')
 
 
 class MiscConfig(object):
-    def __init__(self, use_single_file_arg=True, use_config_arg=True):
+    def __init__(self, use_single_file_arg=True, use_config_arg=True, save_arg_name='save'):
         self.use_single_file_arg = use_single_file_arg
         self.use_config_arg = use_config_arg
+        self.save_arg_name = save_arg_name
 
 
 class SourcePortBuilder(object):
@@ -746,6 +776,7 @@ def main():
         game.generate_d2all_record_batch_file()
         game.generate_map_launch_batch_files()
         game.create_demo_directories()
+        game.create_save_directories()
         game.generate_demo_launchers()
 
 if __name__ == '__main__':
