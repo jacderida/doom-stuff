@@ -74,7 +74,7 @@ class SourcePort(ABC):
             self.config_name))
         commands.append('cd {0}'.format(self.install_path))
         if configuration in ['music', 'nomusic']:
-            commands.append('AutoHotkeyU64.exe {0}\\mb3quickload.ahk'.format(self.doom_config.utils_path))
+            commands.append('start AutoHotkeyU64.exe {0}\\mb3quickload.ahk'.format(self.doom_config.utils_path))
         return commands
 
     def get_post_game_config_commands(self, game, configuration, mission=None):
