@@ -35,6 +35,13 @@ class SourcePort(ABC):
         commands.append(self._get_playdemo_command(game, demo_path))
         return commands
 
+    def get_viddump_batch_commands(self, game, demo_path, win_demo_path):
+        commands = []
+        [commands.append(x) for x in self.get_pre_launch_config_commands('viddump')]
+        commands.append(self._get_viddump_command(game, demo_path, win_demo_path))
+        [commands.append(x) for x in self.get_post_game_config_commands(game, 'viddump')]
+        return commands
+
     def get_launch_batch_commands(self, game, configuration):
         commands = []
         [commands.append(x) for x in self.get_pre_launch_config_commands(configuration)]
@@ -72,6 +79,9 @@ class SourcePort(ABC):
             self.config_name,
             self.install_path,
             self.config_name))
+        if configuration == 'viddump':
+            commands.append('copy {0}\\{1} {2}\\{3} /Y'.format(
+                self.doom_config.utils_path, 'ffmpeg.exe', self.install_path, 'ffmpeg.exe'))
         commands.append('cd {0}'.format(self.install_path))
         if configuration in ['music', 'nomusic']:
             commands.append('start AutoHotkeyU64.exe {0}\\mb3quickload.ahk'.format(self.doom_config.utils_path))
@@ -163,6 +173,16 @@ class SourcePort(ABC):
         launch_command += self.get_game_options(game, None, None)
         launch_command += self.get_misc_options('none', game)
         launch_command += '-playdemo "{0}"'.format(demo_path)
+        return launch_command.strip()
+
+    def _get_viddump_command(self, game, demo_path, win_demo_path):
+        launch_command = '{0} '.format(self.exe_name)
+        launch_command += self.get_game_options(game, None, None)
+        launch_command += self.get_misc_options('viddump', game)
+        launch_command += '-timedemo "{0}"'.format(win_demo_path)
+        demo_file_name = "{0}.mp4".format(os.path.basename(demo_path).split('.')[0])
+        path = '{0}\\{1}'.format(self.doom_config.viddump_path, demo_file_name)
+        launch_command += ' -viddump "{0}"'.format(path)
         return launch_command.strip()
 
     def _get_pre_launch_record_commands(self, game, mission=None):
@@ -262,18 +282,19 @@ class DsdaSourcePort(BoomSourcePort):
 
     def get_misc_options(self, configuration, game):
         options = ''
-        if configuration == 'record' and game.complevel not in [9, 11]:
+        if configuration in ['record', 'viddump'] and game.complevel not in [9, 11]:
             # When recording, apply complevel for all values except 9 or 11.
             # For some reason, those values force the use of `-shorttics` when recording demos.
             options = '-complevel {0} '.format(game.complevel)
-        elif configuration != 'record':
+        elif configuration not in ['record', 'viddump']:
             options = '-complevel {0} '.format(game.complevel)
         options += '-nowindow -noaccel '
         if configuration == 'nomusic':
             options += '-nomusic '
         elif configuration == 'nomonsters':
             options += '-nomonsters '
-        options += '-analysis -track_100k -time_keys -time_secrets '
+        if configuration != 'viddump':
+            options += '-analysis -track_100k -time_keys -time_secrets '
         return options
 
     def get_recording_options(self, game, episode, mission):
@@ -283,6 +304,10 @@ class DsdaSourcePort(BoomSourcePort):
 
     def get_post_game_config_commands(self, game, configuration, mission=None):
         commands = []
+        if configuration == 'viddump':
+            commands.append('del *.txt')
+            commands.append('del ffmpeg.exe')
+            return commands
         if configuration == 'record':
             demo_path = '{0}\\{1}\\{2}'.format(
                 self.doom_config.demos_path, game.get_directory_friendly_name(), mission)
@@ -441,6 +466,21 @@ class Game(object):
                 for command in commands:
                     f.write(command + os.linesep)
 
+    def generate_viddump_launchers(self):
+        full_demo_paths = self._get_full_demo_paths()
+        viddump_launchers_path = self._get_viddump_launchers_path_for_game()
+        win_demos_path = self._get_win_demos_path_for_game()
+        dsda_source_port = next(x for x in self.source_ports if x.name == 'dsda')
+        for demo_path in full_demo_paths:
+            win_demo_path = self._get_win_demo_path(demo_path, win_demos_path)
+            commands = dsda_source_port.get_viddump_batch_commands(
+                self, demo_path, win_demo_path)
+            path = self._get_demo_launcher_path(viddump_launchers_path, demo_path)
+            with open(path, 'w') as f:
+                print('Writing {0}'.format(path))
+                for command in commands:
+                    f.write(command + os.linesep)
+
     def generate_launch_batch_files(self):
         for source_port in self.source_ports:
             for config in source_port.get_configurations():
@@ -555,6 +595,13 @@ class Game(object):
             os.makedirs(demo_launchers_path)
         return demo_launchers_path
 
+    def _get_viddump_launchers_path_for_game(self):
+        viddump_launchers_path = os.path.join(
+            self.doom_config.unix_viddump_launchers_path, self.get_directory_friendly_name())
+        if not os.path.exists(viddump_launchers_path):
+            os.makedirs(viddump_launchers_path)
+        return viddump_launchers_path
+
 
 class Episode(object):
     def __init__(self, name, number):
@@ -641,6 +688,7 @@ class DoomConfig(object):
         self.unix_source_ports_path = os.path.join(unix_home_directory_path, 'source-ports')
         self.unix_launchers_path = os.path.join(unix_home_directory_path, 'launchers')
         self.unix_demo_launchers_path = os.path.join(unix_home_directory_path, 'demo-launchers')
+        self.unix_viddump_launchers_path = os.path.join(unix_home_directory_path, 'viddump-launchers')
         self.unix_demos_path = os.path.join(unix_home_directory_path, 'demos')
         self.unix_saves_path = os.path.join(unix_home_directory_path, 'saves')
         self.config_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'config')
@@ -652,6 +700,7 @@ class DoomConfig(object):
         self.mod_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'mods')
         self.demos_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'demos')
         self.saves_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'saves')
+        self.viddump_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'viddump')
         self.utils_path = '{0}\\{1}'.format(self.windows_home_directory_path, 'utils')
 
 
@@ -787,6 +836,7 @@ def main():
         game.create_demo_directories()
         game.create_save_directories()
         game.generate_demo_launchers()
+        game.generate_viddump_launchers()
 
 if __name__ == '__main__':
     sys.exit(main())
