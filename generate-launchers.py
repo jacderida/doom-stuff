@@ -119,6 +119,8 @@ class SourcePort(ABC):
             options += '{0}\\{1} '.format(self.doom_config.wad_path, game.pwad)
             if game.pwad == 'btsx_e1a.wad':
                 options += self._get_wad_option('btsx_e1b.wad')
+            elif game.pwad == 'sunlust.wad':
+                options += self._get_wad_option('D2SPFX19-sunlust.WAD')
         if game.name == 'Master Levels for Doom II':
             options += self._get_wad_option(mission.wad)
         return options
@@ -146,7 +148,7 @@ class SourcePort(ABC):
     def get_low_priority_wads(self, game):
         options = ''
         # Some WADs aren't compatible with the sprite fix WAD
-        if game.pwad not in ['ANTA_REQ.WAD', 'Eviternity.wad']:
+        if game.pwad not in ['ANTA_REQ.WAD', 'Eviternity.wad', 'sunlust.wad']:
             if game.iwad == 'DOOM.WAD':
                 options += self._get_wad_option('D1SPFX19.WAD')
             else:
